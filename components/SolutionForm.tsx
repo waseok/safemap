@@ -195,6 +195,7 @@ export default function SolutionForm({ safetyPinId, onSuccess }: SolutionFormPro
           />
           {imagePreview && (
             <div className="mt-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imagePreview}
                 alt="미리보기"

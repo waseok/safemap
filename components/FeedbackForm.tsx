@@ -16,30 +16,40 @@ export default function FeedbackForm({ safetyPinId }: FeedbackFormProps) {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    checkTeacher();
-    loadFeedback();
-  }, [safetyPinId]);
+    let cancelled = false;
 
-  const checkTeacher = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setIsTeacher(!!user);
-  };
+    const init = async () => {
+      setLoading(true);
+      try {
+        // 교사 여부 확인
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (cancelled) return;
+        setIsTeacher(!!user);
 
-  const loadFeedback = async () => {
-    try {
-      const res = await fetch(`/api/feedback?safety_pin_id=${safetyPinId}`);
-      if (!res.ok) return;
+        // 기존 피드백 불러오기
+        const res = await fetch(`/api/feedback?safety_pin_id=${safetyPinId}`);
+        if (!res.ok || cancelled) return;
 
-      const data = await res.json();
-      if (data.feedback) {
-        setFeedback(data.feedback.feedback);
+        const data = await res.json();
+        if (data.feedback) {
+          setFeedback(data.feedback.feedback);
+        }
+      } catch (err) {
+        console.error("피드백 로드 오류:", err);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-    } catch (err) {
-      console.error("피드백 로드 오류:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    init();
+    return () => {
+      cancelled = true;
+    };
+  }, [safetyPinId, supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { loadNaverMapScript, getGeocode } from "@/lib/naver-map";
 
 const STORAGE_RECENT_KEY = "safety-map-recent-search";
@@ -112,7 +112,7 @@ export default function NaverMap({
           return;
         }
 
-        const mapOptions: Record<string, unknown> = {
+        const mapOptions: naver.maps.MapOptions = {
           center: new window.naver.maps.LatLng(center.lat, center.lng),
           zoom,
         };
@@ -141,12 +141,12 @@ export default function NaverMap({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [center.lat, center.lng, showZoomControl, zoom]);
 
   useEffect(() => {
     if (!map || !center || typeof window === "undefined" || !window.naver?.maps) return;
     map.setCenter(new window.naver.maps.LatLng(center.lat, center.lng));
-  }, [map, center?.lat, center?.lng]);
+  }, [map, center]);
 
   useEffect(() => {
     if (!map) return;
@@ -269,11 +269,6 @@ export default function NaverMap({
       }
     );
   };
-
-  const refreshStored = useCallback(() => {
-    setRecentSearches(loadRecentSearches());
-    setFavorites(loadFavorites());
-  }, []);
 
   const handleSearch = async () => {
     if (!searchQuery.trim() || !map || !window.naver?.maps) return;
@@ -417,7 +412,7 @@ export default function NaverMap({
                       <p className="text-xs font-medium text-gray-500">즐겨찾기</p>
                       <button
                         type="button"
-                        onClick={() => { refreshStored(); addCurrentToFavorites(); }}
+                        onClick={addCurrentToFavorites}
                         className="text-xs text-green-600 hover:underline"
                       >
                         + 현재 위치 저장
