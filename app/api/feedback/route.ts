@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function GET(request: NextRequest) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
     const searchParams = request.nextUrl.searchParams;
     const safetyPinId = searchParams.get("safety_pin_id");
 
@@ -40,6 +36,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
     // JWT로 인증 (cookies/SSR 제거 - Vercel 빌드 에러 방지)
     const authHeader = request.headers.get("Authorization");
     const token = authHeader?.replace(/^Bearer\s+/i, "");
