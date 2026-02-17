@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NaverMap from "@/components/Map/NaverMap";
 import { getStudentSessionId, getClassId, getStudentId } from "@/lib/session";
@@ -146,11 +146,14 @@ export default function MapPage() {
         <button
           type="button"
           onClick={() => setAddPinMode(!addPinMode)}
-          className={`absolute bottom-4 left-4 z-20 px-4 py-2 rounded-lg shadow-md font-medium ${
+          className={`absolute bottom-4 left-4 z-20 flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg shadow-md font-medium ${
             addPinMode ? "bg-orange-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"
           }`}
         >
-          {addPinMode ? "핀 추가 모드 (지도를 클릭하세요)" : "📍 핀 추가"}
+          <span className="text-lg">📍</span>
+          <span className="text-sm">
+            {addPinMode ? "지도를 클릭하여 핀을 꽂으세요" : "안전점검 핀"}
+          </span>
         </button>
       </div>
 
@@ -223,7 +226,6 @@ function AddPinModal({
       setLoading(false);
       return;
     }
-
     try {
       let imageUrl = "";
       if (imageFile) {
@@ -274,9 +276,16 @@ function AddPinModal({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          <p className="text-sm text-gray-600">
-            위치: {address || `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`}
-          </p>
+          <div>
+            <label className="block text-sm font-medium mb-1">장소 유형</label>
+            <p className="text-sm text-gray-600 py-2 px-3 bg-gray-50 rounded">마을 (지도에서 선택한 위치)</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">선택한 위치</label>
+            <p className="text-sm text-gray-600">
+              {address || `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`}
+            </p>
+          </div>
           <div>
             <label className="block text-sm font-medium mb-1">카테고리 *</label>
             <select
@@ -312,9 +321,52 @@ function AddPinModal({
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">사진</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full text-sm" />
+            <p className="text-xs text-gray-500 mb-2">앨범에서 선택하거나 카메라로 촬영하세요</p>
+            <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                📁 앨범에서 선택
+              </button>
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                📷 카메라로 촬영
+              </button>
+            </div>
             {imagePreview && (
-              <img src={imagePreview} alt="미리보기" className="mt-2 h-24 object-cover rounded" />
+              <div className="mt-2 relative">
+                <img src={imagePreview} alt="미리보기" className="h-32 object-cover rounded border" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageFile(null);
+                    setImagePreview(null);
+                  }}
+                  className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded"
+                >
+                  삭제
+                </button>
+              </div>
             )}
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}

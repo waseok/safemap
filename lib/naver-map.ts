@@ -20,7 +20,7 @@ const NAVER_MAP_SCRIPT_URL =
 
 export function getNaverMapScriptUrl(): string {
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID || "";
-  return `${NAVER_MAP_SCRIPT_URL}?ncpKeyId=${clientId}`;
+  return `${NAVER_MAP_SCRIPT_URL}?ncpKeyId=${clientId}&submodules=geocoder`;
 }
 
 export const loadNaverMapScript = (): Promise<void> => {
@@ -57,24 +57,25 @@ export const getGeocode = async (address: string): Promise<{ lat: number; lng: n
 
   return new Promise((resolve) => {
     window.naver.maps.Service.geocode(
-      {
-        query: address,
-      },
+      { address: address.trim() },
       (status: any, response: any) => {
-        if (status === window.naver.maps.Service.Status.ERROR) {
+        if (status !== window.naver.maps.Service.Status.OK) {
           resolve(null);
           return;
         }
-
-        if (response.v2.meta.totalCount === 0) {
+        const items = response.result?.items;
+        if (!items || items.length === 0) {
           resolve(null);
           return;
         }
-
-        const item = response.v2.addresses[0];
+        const point = items[0].point;
+        if (!point) {
+          resolve(null);
+          return;
+        }
         resolve({
-          lat: parseFloat(item.y),
-          lng: parseFloat(item.x),
+          lat: typeof point.y === "number" ? point.y : parseFloat(point.y),
+          lng: typeof point.x === "number" ? point.x : parseFloat(point.x),
         });
       }
     );
@@ -92,30 +93,19 @@ export const getReverseGeocode = async (
   return new Promise((resolve) => {
     window.naver.maps.Service.reverseGeocode(
       {
-        coords: new window.naver.maps.LatLng(lat, lng),
+        location: new window.naver.maps.LatLng(lat, lng),
       },
       (status: any, response: any) => {
-        if (status === window.naver.maps.Service.Status.ERROR) {
+        if (status !== window.naver.maps.Service.Status.OK) {
           resolve(null);
           return;
         }
-
-        if (response.v2.results.length === 0) {
+        const items = response.result?.items;
+        if (!items || items.length === 0) {
           resolve(null);
           return;
         }
-
-        const address = response.v2.results[0].region;
-        const formattedAddress = [
-          address.area1.name,
-          address.area2.name,
-          address.area3.name,
-          address.area4.name,
-        ]
-          .filter(Boolean)
-          .join(" ");
-
-        resolve(formattedAddress);
+        resolve(items[0].address || null);
       }
     );
   });

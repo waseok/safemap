@@ -70,14 +70,6 @@ export default function NaverMap({
 
         setMap(mapInstance);
         setIsLoaded(true);
-
-        if (selectable && onMapClick) {
-          window.naver.maps.Event.addListener(mapInstance, "click", (e: any) => {
-            const lat = e.coord.lat();
-            const lng = e.coord.lng();
-            onMapClick(lat, lng);
-          });
-        }
       } catch (err) {
         if (!cancelled) {
           const message = err instanceof Error ? err.message : "지도 로드 실패";
@@ -101,6 +93,19 @@ export default function NaverMap({
     if (!map) return;
     map.setZoom(zoom);
   }, [map, zoom]);
+
+  // selectable/onMapClick 변경 시 클릭 리스너 동적 추가/제거
+  useEffect(() => {
+    if (!map || !selectable || !onMapClick) return;
+    const listener = window.naver.maps.Event.addListener(map, "click", (e: any) => {
+      const lat = e.coord.lat();
+      const lng = e.coord.lng();
+      onMapClick(lat, lng);
+    });
+    return () => {
+      window.naver.maps.Event.removeListener(listener);
+    };
+  }, [map, selectable, onMapClick]);
 
   useEffect(() => {
     if (!map || !isLoaded || typeof window === "undefined" || !window.naver?.maps) return;
@@ -229,23 +234,26 @@ export default function NaverMap({
       )}
       <div
         ref={mapRef}
-        style={{ width: "100%", height }}
-        className={selectable ? "cursor-crosshair" : ""}
+        style={{
+          width: "100%",
+          height,
+          cursor: selectable ? "crosshair" : "",
+        }}
       />
       {/* 지도 버튼 오버레이 */}
       {(showMyLocationButton || showSearchButton) && isLoaded && (
-        <div className="absolute top-3 right-3 flex flex-col gap-2 z-20">
+        <div className="absolute top-3 right-3 flex flex-col gap-3 z-20">
           {showSearchButton && (
-            <div>
+            <div className="flex flex-col items-center">
               {searchOpen ? (
-                <div className="flex gap-1 bg-white rounded-lg shadow-md p-1">
+                <div className="flex gap-1 bg-white rounded-lg shadow-md p-2">
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    placeholder="장소 검색"
-                    className="px-3 py-2 w-40 text-sm border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="주소 또는 장소 검색"
+                    className="px-3 py-2 w-44 text-sm border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     autoFocus
                   />
                   <button
@@ -271,10 +279,11 @@ export default function NaverMap({
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
-                  className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50"
+                  className="flex flex-col items-center gap-0.5 w-12 py-2 bg-white rounded-lg shadow-md hover:bg-gray-50"
                   title="장소 검색"
                 >
-                  🔍
+                  <span className="text-lg">🔍</span>
+                  <span className="text-xs text-gray-700">검색</span>
                 </button>
               )}
             </div>
@@ -283,10 +292,11 @@ export default function NaverMap({
             <button
               type="button"
               onClick={handleMyLocation}
-              className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50"
+              className="flex flex-col items-center gap-0.5 w-12 py-2 bg-white rounded-lg shadow-md hover:bg-gray-50"
               title="내 위치로 이동"
             >
-              📍
+              <span className="text-lg">📍</span>
+              <span className="text-xs text-gray-700">내 위치</span>
             </button>
           )}
         </div>
