@@ -191,7 +191,9 @@ function AddPinModal({
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getReverseGeocode(location.lat, location.lng).then(setAddress);
+    getReverseGeocode(location.lat, location.lng).then((addr) =>
+      setAddress(addr ?? "")
+    );
   }, [location.lat, location.lng]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
