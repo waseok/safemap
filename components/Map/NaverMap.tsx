@@ -112,7 +112,7 @@ export default function NaverMap({
           return;
         }
 
-        const mapOptions: naver.maps.MapOptions = {
+        const mapOptions = {
           center: new window.naver.maps.LatLng(center.lat, center.lng),
           zoom,
         };
