@@ -49,6 +49,16 @@ export default function MainLayout({
           <div className="flex justify-between items-center h-16">
             <div className="flex flex-wrap gap-2">
               <Link
+                href="/map"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  pathname === "/map"
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                지도 보기
+              </Link>
+              <Link
                 href="/list"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   pathname === "/list"
