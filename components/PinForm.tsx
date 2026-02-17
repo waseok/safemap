@@ -165,6 +165,8 @@ export default function PinForm({ onSuccess }: PinFormProps) {
             selectable
             onMapClick={handleLocationSelect}
             center={selectedLocation || undefined}
+            showMyLocationButton
+            showSearchButton
           />
           {selectedLocation && (
             <p className="mt-2 text-sm text-gray-600">

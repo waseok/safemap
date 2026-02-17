@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { loadNaverMapScript } from "@/lib/naver-map";
+import { loadNaverMapScript, getGeocode } from "@/lib/naver-map";
 
 interface NaverMapProps {
   center?: { lat: number; lng: number };
   zoom?: number;
   onMapClick?: (lat: number, lng: number) => void;
+  onCenterChange?: (lat: number, lng: number) => void;
   markers?: Array<{
     id: string;
     lat: number;
@@ -17,6 +18,8 @@ interface NaverMapProps {
   }>;
   height?: string;
   selectable?: boolean;
+  showMyLocationButton?: boolean;
+  showSearchButton?: boolean;
 }
 
 const MAP_DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
@@ -25,15 +28,21 @@ export default function NaverMap({
   center = MAP_DEFAULT_CENTER,
   zoom = 15,
   onMapClick,
+  onCenterChange,
   markers = [],
   height = "400px",
   selectable = false,
+  showMyLocationButton = false,
+  showSearchButton = false,
 }: NaverMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<any[]>([]);
   const [map, setMap] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -168,6 +177,46 @@ export default function NaverMap({
     );
   }
 
+  const handleMyLocation = () => {
+    if (!map || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        if (window.naver?.maps) {
+          map.setCenter(new window.naver.maps.LatLng(lat, lng));
+          map.setZoom(16);
+          onCenterChange?.(lat, lng);
+        }
+      },
+      (err) => {
+        alert("위치를 가져올 수 없습니다. 위치 권한을 확인해주세요.");
+        console.warn("Geolocation error:", err);
+      }
+    );
+  };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim() || !map || !window.naver?.maps) return;
+    setSearching(true);
+    try {
+      const coords = await getGeocode(searchQuery.trim());
+      if (coords) {
+        map.setCenter(new window.naver.maps.LatLng(coords.lat, coords.lng));
+        map.setZoom(16);
+        onCenterChange?.(coords.lat, coords.lng);
+        setSearchOpen(false);
+        setSearchQuery("");
+      } else {
+        alert("검색 결과를 찾을 수 없습니다.");
+      }
+    } catch (err) {
+      alert("검색에 실패했습니다.");
+    } finally {
+      setSearching(false);
+    }
+  };
+
   return (
     <div className="relative" style={{ width: "100%", height }}>
       {!isLoaded && (
@@ -183,6 +232,65 @@ export default function NaverMap({
         style={{ width: "100%", height }}
         className={selectable ? "cursor-crosshair" : ""}
       />
+      {/* 지도 버튼 오버레이 */}
+      {(showMyLocationButton || showSearchButton) && isLoaded && (
+        <div className="absolute top-3 right-3 flex flex-col gap-2 z-20">
+          {showSearchButton && (
+            <div>
+              {searchOpen ? (
+                <div className="flex gap-1 bg-white rounded-lg shadow-md p-1">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    placeholder="장소 검색"
+                    className="px-3 py-2 w-40 text-sm border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSearch}
+                    disabled={searching}
+                    className="px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:opacity-50"
+                  >
+                    {searching ? "검색중" : "이동"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchOpen(false);
+                      setSearchQuery("");
+                    }}
+                    className="px-2 py-2 text-gray-600 hover:text-gray-800"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50"
+                  title="장소 검색"
+                >
+                  🔍
+                </button>
+              )}
+            </div>
+          )}
+          {showMyLocationButton && (
+            <button
+              type="button"
+              onClick={handleMyLocation}
+              className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50"
+              title="내 위치로 이동"
+            >
+              📍
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
