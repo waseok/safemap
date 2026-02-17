@@ -112,19 +112,10 @@ export default function NaverMap({
           return;
         }
 
-        const mapOptions = {
+        const mapInstance = new window.naver.maps.Map(mapRef.current, {
           center: new window.naver.maps.LatLng(center.lat, center.lng),
           zoom,
-        };
-        if (showZoomControl) {
-          mapOptions.zoomControl = true;
-          mapOptions.zoomControlOptions = {
-            position: window.naver.maps.Position.LEFT_CENTER,
-            style: window.naver.maps.ZoomControlStyle.SMALL,
-          };
-        }
-
-        const mapInstance = new window.naver.maps.Map(mapRef.current, mapOptions);
+        });
         if (cancelled) return;
 
         setMap(mapInstance);
@@ -268,6 +259,18 @@ export default function NaverMap({
         console.warn("Geolocation error:", err);
       }
     );
+  };
+
+  const handleZoomIn = () => {
+    if (!map || !window.naver?.maps) return;
+    const currentZoom = map.getZoom ? map.getZoom() : zoom;
+    map.setZoom(currentZoom + 1);
+  };
+
+  const handleZoomOut = () => {
+    if (!map || !window.naver?.maps) return;
+    const currentZoom = map.getZoom ? map.getZoom() : zoom;
+    map.setZoom(currentZoom - 1);
   };
 
   const handleSearch = async () => {
@@ -468,6 +471,26 @@ export default function NaverMap({
               <span className="text-lg">📍</span>
               <span className="text-xs text-gray-700">내 위치</span>
             </button>
+          )}
+          {showZoomControl && (
+            <div className="flex flex-col items-center bg-white rounded-lg shadow-md overflow-hidden">
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                className="w-10 h-8 flex items-center justify-center text-lg hover:bg-gray-50 border-b border-gray-200"
+                title="확대"
+              >
+                +
+              </button>
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                className="w-10 h-8 flex items-center justify-center text-lg hover:bg-gray-50"
+                title="축소"
+              >
+                −
+              </button>
+            </div>
           )}
         </div>
       )}
