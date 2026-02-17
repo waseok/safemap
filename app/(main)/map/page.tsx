@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import NaverMap from "@/components/Map/NaverMap";
 import { getStudentSessionId, getClassId, getStudentId } from "@/lib/session";
@@ -192,6 +192,8 @@ function AddPinModal({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getReverseGeocode(location.lat, location.lng).then((addr) =>
