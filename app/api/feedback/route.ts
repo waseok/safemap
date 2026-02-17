@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
 
-// Vercel 빌드 시 정적 분석 방지 (API 라우트는 항상 동적)
 export const dynamic = "force-dynamic";
 
 const supabaseAdmin = createClient(
@@ -43,30 +40,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet: { name: string; value: string; options?: object }[]) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch {
-              // Route Handler에서 setAll 호출 시 무시
-            }
-          },
-        },
-      }
-    );
-    const { data: { user } } = await supabase.auth.getUser();
+    // JWT로 인증 (cookies/SSR 제거 - Vercel 빌드 에러 방지)
+    const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace(/^Bearer\s+/i, "");
 
-    if (!user) {
+    if (!token) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+    }
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
       return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
