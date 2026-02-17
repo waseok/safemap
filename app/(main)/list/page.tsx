@@ -3,14 +3,27 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PinList from "@/components/PinList";
+import EducationLinks from "@/components/EducationLinks";
 import { getStudentSessionId, getClassId } from "@/lib/session";
-import type { SafetyPin } from "@/types";
+import type { SafetyPin, SafetyCategory } from "@/types";
+import { SAFETY_CATEGORIES } from "@/types";
+
+const CATEGORY_SHORT_LABELS: Record<string, string> = {
+  생활안전: "생활",
+  교통안전: "교통",
+  응급처치: "응급처치",
+  "폭력예방 및 신변보호": "폭력·신변",
+  "약물 및 사이버 중독 예방": "약물·사이버",
+  재난안전: "재난",
+  직업안전: "직업",
+};
 
 export default function ListPage() {
   const router = useRouter();
   const [pins, setPins] = useState<(SafetyPin & { students: { name: string } })[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<string>("all");
+  const [locationFilter, setLocationFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   useEffect(() => {
     const sessionId = getStudentSessionId();
@@ -20,7 +33,7 @@ export default function ListPage() {
     }
 
     loadPins();
-  }, [router, filter]);
+  }, [router, locationFilter, categoryFilter]);
 
   const loadPins = async () => {
     try {
@@ -35,7 +48,7 @@ export default function ListPage() {
             class_id: "test-class-id",
             student_id: "test-student-id",
             location_type: "마을",
-            category: "교통",
+            category: "교통안전",
             title: "횡단보도 신호등 고장",
             description: "신호등이 작동하지 않아 위험합니다.",
             latitude: 37.5665,
@@ -65,7 +78,7 @@ export default function ListPage() {
             class_id: "test-class-id",
             student_id: "test-student-id",
             location_type: "집",
-            category: "환경",
+            category: "재난안전",
             title: "배수구 막힘",
             description: "아파트 앞 배수구가 막혀 있습니다.",
             latitude: null,
@@ -77,11 +90,14 @@ export default function ListPage() {
           },
         ];
         
-        const filteredPins = filter === "all" 
-          ? allTestPins 
-          : allTestPins.filter(pin => pin.location_type === filter);
-        
-        setPins(filteredPins);
+        let filtered = allTestPins;
+        if (locationFilter !== "all") {
+          filtered = filtered.filter((pin) => pin.location_type === locationFilter);
+        }
+        if (categoryFilter !== "all") {
+          filtered = filtered.filter((pin) => pin.category === categoryFilter);
+        }
+        setPins(filtered);
         setLoading(false);
         return;
       }
@@ -90,8 +106,11 @@ export default function ListPage() {
       if (!classId) return;
 
       let url = `/api/pins?class_id=${classId}`;
-      if (filter !== "all") {
-        url += `&location_type=${filter}`;
+      if (locationFilter !== "all") {
+        url += `&location_type=${locationFilter}`;
+      }
+      if (categoryFilter !== "all") {
+        url += `&category=${encodeURIComponent(categoryFilter)}`;
       }
 
       const res = await fetch(url);
@@ -119,49 +138,63 @@ export default function ListPage() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6 mb-4">
           <h1 className="text-2xl font-bold mb-4">리스트 보기</h1>
-          
-          <div className="flex gap-2 mb-4">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                filter === "all"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              전체
-            </button>
-            <button
-              onClick={() => setFilter("학교")}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                filter === "학교"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              🏫 학교
-            </button>
-            <button
-              onClick={() => setFilter("집")}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                filter === "집"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              🏠 집
-            </button>
-            <button
-              onClick={() => setFilter("마을")}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                filter === "마을"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              🗺️ 마을
-            </button>
+
+          {/* 장소 유형 필터 */}
+          <div className="mb-2">
+            <span className="text-sm font-medium text-gray-600 mr-2">장소</span>
+            <div className="flex flex-wrap gap-2">
+              {["all", "학교", "집", "마을"].map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => setLocationFilter(loc)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                    locationFilter === loc
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  {loc === "all" ? "전체" : loc === "학교" ? "🏫 학교" : loc === "집" ? "🏠 집" : "🗺️ 마을"}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* 7대 안전 필터 */}
+          <div className="mb-4">
+            <span className="text-sm font-medium text-gray-600 mr-2">7대 안전</span>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setCategoryFilter("all")}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                  categoryFilter === "all"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                전체
+              </button>
+              {SAFETY_CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategoryFilter(cat)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                    categoryFilter === cat
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                  title={cat}
+                >
+                  {CATEGORY_SHORT_LABELS[cat] ?? cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {categoryFilter !== "all" && (
+            <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+              <EducationLinks category={categoryFilter as SafetyCategory} />
+            </div>
+          )}
 
           <PinList pins={pins} />
         </div>

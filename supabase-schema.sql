@@ -27,7 +27,10 @@ CREATE TABLE safety_pins (
   class_id UUID NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
   student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
   location_type VARCHAR(10) NOT NULL CHECK (location_type IN ('학교', '집', '마을')),
-  category VARCHAR(20) NOT NULL CHECK (category IN ('교통', '생활안전', '환경', '기타')),
+  category VARCHAR(50) NOT NULL CHECK (category IN (
+    '생활안전', '교통안전', '응급처치', '폭력예방 및 신변보호',
+    '약물 및 사이버 중독 예방', '재난안전', '직업안전'
+  )),
   title VARCHAR(255) NOT NULL,
   description TEXT,
   latitude DOUBLE PRECISION,

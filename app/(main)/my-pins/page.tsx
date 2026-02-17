@@ -34,7 +34,7 @@ export default function MyPinsPage() {
             class_id: "test-class-id",
             student_id: "test-student-id",
             location_type: "마을",
-            category: "교통",
+            category: "교통안전",
             title: "횡단보도 신호등 고장",
             description: "신호등이 작동하지 않아 위험합니다.",
             latitude: 37.5665,

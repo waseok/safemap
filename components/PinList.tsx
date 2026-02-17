@@ -12,10 +12,13 @@ export default function PinList({ pins }: PinListProps) {
 
   const getCategoryIcon = (category: string) => {
     const icons: Record<string, string> = {
-      교통: "🚦",
       생활안전: "⚠️",
-      환경: "🌱",
-      기타: "📍",
+      교통안전: "🚦",
+      응급처치: "🩹",
+      "폭력예방 및 신변보호": "🛡️",
+      "약물 및 사이버 중독 예방": "📵",
+      재난안전: "🌪️",
+      직업안전: "👷",
     };
     return icons[category] || "📍";
   };

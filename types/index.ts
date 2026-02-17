@@ -1,6 +1,25 @@
 // 데이터베이스 타입 정의
 export type LocationType = "학교" | "집" | "마을";
-export type SafetyCategory = "교통" | "생활안전" | "환경" | "기타";
+/** 7대 안전 (교육부 등에서 사용하는 안전 영역) */
+export type SafetyCategory =
+  | "생활안전"
+  | "교통안전"
+  | "응급처치"
+  | "폭력예방 및 신변보호"
+  | "약물 및 사이버 중독 예방"
+  | "재난안전"
+  | "직업안전";
+
+/** 7대 안전 목록 (UI select 등에서 사용) */
+export const SAFETY_CATEGORIES: SafetyCategory[] = [
+  "생활안전",
+  "교통안전",
+  "응급처치",
+  "폭력예방 및 신변보호",
+  "약물 및 사이버 중독 예방",
+  "재난안전",
+  "직업안전",
+];
 export type SolutionType = "text" | "image" | "drawing";
 
 export interface Class {

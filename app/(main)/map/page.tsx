@@ -6,6 +6,7 @@ import NaverMap from "@/components/Map/NaverMap";
 import { getStudentSessionId, getClassId, getStudentId } from "@/lib/session";
 import { getReverseGeocode } from "@/lib/naver-map";
 import type { SafetyPin, SafetyCategory } from "@/types";
+import { SAFETY_CATEGORIES } from "@/types";
 
 export default function MapPage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function MapPage() {
             class_id: "test-class-id",
             student_id: "test-student-id",
             location_type: "마을",
-            category: "교통",
+            category: "교통안전",
             title: "횡단보도 신호등 고장",
             description: "신호등이 작동하지 않아 위험합니다.",
             latitude: 37.5665,
@@ -184,7 +185,7 @@ function AddPinModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [category, setCategory] = useState<SafetyCategory>("교통");
+  const [category, setCategory] = useState<SafetyCategory>("생활안전");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
@@ -295,7 +296,7 @@ function AddPinModal({
               onChange={(e) => setCategory(e.target.value as SafetyCategory)}
               className="w-full px-3 py-2 border rounded-md"
             >
-              {(["교통", "생활안전", "환경", "기타"] as SafetyCategory[]).map((c) => (
+              {SAFETY_CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>

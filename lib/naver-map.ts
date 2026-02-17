@@ -15,12 +15,13 @@ declare global {
 }
 
 // 2024년 네이버 지도 API 업데이트: oapi + ncpKeyId 사용
+// 주소/장소 검색(Geocoding)을 쓰려면 submodules=geocoder 필수
 const NAVER_MAP_SCRIPT_URL =
   "https://oapi.map.naver.com/openapi/v3/maps.js";
 
 export function getNaverMapScriptUrl(): string {
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID || "";
-  return `${NAVER_MAP_SCRIPT_URL}?ncpKeyId=${clientId}`;
+  return `${NAVER_MAP_SCRIPT_URL}?ncpKeyId=${clientId}&submodules=geocoder`;
 }
 
 export const loadNaverMapScript = (): Promise<void> => {

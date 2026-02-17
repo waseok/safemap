@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const classId = searchParams.get("class_id");
     const studentId = searchParams.get("student_id");
     const locationType = searchParams.get("location_type");
+    const category = searchParams.get("category");
 
     if (!classId) {
       return NextResponse.json({ error: "class_id가 필요합니다." }, { status: 400 });
@@ -30,6 +31,10 @@ export async function GET(request: NextRequest) {
 
     if (locationType) {
       query = query.eq("location_type", locationType);
+    }
+
+    if (category) {
+      query = query.eq("category", category);
     }
 
     const { data, error } = await query;

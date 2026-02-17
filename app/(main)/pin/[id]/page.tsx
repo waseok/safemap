@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import NaverMap from "@/components/Map/NaverMap";
 import FeedbackForm from "@/components/FeedbackForm";
+import EducationLinks from "@/components/EducationLinks";
 import { getStudentSessionId } from "@/lib/session";
-import type { SafetyPin } from "@/types";
+import type { SafetyPin, SafetyCategory } from "@/types";
 
 export default function PinDetailPage() {
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function PinDetailPage() {
             class_id: "test-class-id",
             student_id: "test-student-id",
             location_type: "마을",
-            category: "교통",
+            category: "교통안전",
             title: "횡단보도 신호등 고장",
             description: "신호등이 작동하지 않아 위험합니다.",
             latitude: 37.5665,
@@ -65,7 +66,7 @@ export default function PinDetailPage() {
             class_id: "test-class-id",
             student_id: "test-student-id",
             location_type: "집",
-            category: "환경",
+            category: "재난안전",
             title: "배수구 막힘",
             description: "아파트 앞 배수구가 막혀 있습니다.",
             latitude: null,
@@ -113,10 +114,13 @@ export default function PinDetailPage() {
 
   const getCategoryIcon = (category: string) => {
     const icons: Record<string, string> = {
-      교통: "🚦",
       생활안전: "⚠️",
-      환경: "🌱",
-      기타: "📍",
+      교통안전: "🚦",
+      응급처치: "🩹",
+      "폭력예방 및 신변보호": "🛡️",
+      "약물 및 사이버 중독 예방": "📵",
+      재난안전: "🌪️",
+      직업안전: "👷",
     };
     return icons[category] || "📍";
   };
@@ -182,6 +186,10 @@ export default function PinDetailPage() {
               </div>
             </div>
           )}
+
+          <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+            <EducationLinks category={pin.category as SafetyCategory} />
+          </div>
 
           <div className="border-t pt-4 mt-4">
             <div className="flex justify-between items-center text-sm text-gray-500">
