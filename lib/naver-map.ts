@@ -14,12 +14,13 @@ declare global {
   }
 }
 
+// 2024년 네이버 지도 API 업데이트: oapi + ncpKeyId 사용
 const NAVER_MAP_SCRIPT_URL =
-  "https://openapi.map.naver.com/openapi/v3/maps.js";
+  "https://oapi.map.naver.com/openapi/v3/maps.js";
 
 export function getNaverMapScriptUrl(): string {
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID || "";
-  return `${NAVER_MAP_SCRIPT_URL}?ncpClientId=${clientId}`;
+  return `${NAVER_MAP_SCRIPT_URL}?ncpKeyId=${clientId}`;
 }
 
 export const loadNaverMapScript = (): Promise<void> => {
