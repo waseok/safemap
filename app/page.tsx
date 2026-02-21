@@ -31,7 +31,7 @@ export default function Home() {
           <h2 className="text-xl font-semibold mb-4 text-center">일반 모드</h2>
           <div className="flex flex-col gap-3">
             <Link
-              href="/teacher/class"
+              href="/teacher/dashboard"
               className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center"
             >
               교사 입장 (학급 만들기)

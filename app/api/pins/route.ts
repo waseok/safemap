@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function GET(request: NextRequest) {
   try {
@@ -71,6 +73,12 @@ export async function POST(request: NextRequest) {
     if (!class_id || !student_id || !location_type || !category || !title) {
       return NextResponse.json(
         { error: "필수 필드가 누락되었습니다." },
+        { status: 400 }
+      );
+    }
+    if (!UUID_REGEX.test(String(class_id)) || !UUID_REGEX.test(String(student_id))) {
+      return NextResponse.json(
+        { error: "학생 세션이 올바르지 않습니다. 학급 입장에서 PIN으로 다시 입장해주세요." },
         { status: 400 }
       );
     }
