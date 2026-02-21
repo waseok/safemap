@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@/lib/supabase/client";
 
 export default function StudentJoinPage() {
   const [step, setStep] = useState<"pin" | "name">("pin");
@@ -12,7 +11,6 @@ export default function StudentJoinPage() {
   const [error, setError] = useState("");
   const [classId, setClassId] = useState<string | null>(null);
   const router = useRouter();
-  const supabase = createClientComponentClient();
 
   const handlePinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,29 +23,23 @@ export default function StudentJoinPage() {
     setError("");
 
     try {
-      const { data, error } = await supabase
-        .from("classes")
-        .select("id, name")
-        .eq("pin", pin)
-        .single();
-
-      if (error) throw error;
-
-      if (!data) {
-        throw new Error("올바른 PIN을 입력해주세요.");
+      const res = await fetch("/api/student/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ step: "pin", pin }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "PIN 확인에 실패했습니다.");
       }
 
-      setClassId(data.id);
+      setClassId(data.classId);
       setStep("name");
     } catch (err: any) {
       setError(err.message || "PIN 확인에 실패했습니다.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const generateSessionId = (): string => {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
   const handleNameSubmit = async (e: React.FormEvent) => {
@@ -58,24 +50,24 @@ export default function StudentJoinPage() {
     setError("");
 
     try {
-      const sessionId = generateSessionId();
-
-      const { data, error } = await supabase
-        .from("students")
-        .insert({
-          class_id: classId,
+      const res = await fetch("/api/student/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          step: "name",
+          classId,
           name: name.trim(),
-          session_id: sessionId,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "입장에 실패했습니다.");
+      }
 
       // 세션 ID를 localStorage에 저장
-      localStorage.setItem("student_session_id", sessionId);
-      localStorage.setItem("student_id", data.id);
-      localStorage.setItem("class_id", classId);
+      localStorage.setItem("student_session_id", data.sessionId);
+      localStorage.setItem("student_id", data.studentId);
+      localStorage.setItem("class_id", data.classId);
 
       router.push("/map");
     } catch (err: any) {
