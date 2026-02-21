@@ -3,12 +3,12 @@
 -- 교사 테이블 (Supabase Auth의 users 테이블과 연동)
 -- 교사는 Supabase Auth를 통해 인증되므로 별도 테이블 불필요
 
--- 학급 테이블
+-- 학급 테이블 (teacher_id는 선택: Supabase Auth 없이도 학급 생성 가능)
 CREATE TABLE classes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pin VARCHAR(4) UNIQUE NOT NULL,
   name VARCHAR(255) NOT NULL,
-  teacher_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  teacher_id UUID DEFAULT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

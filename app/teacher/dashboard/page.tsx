@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@/lib/supabase/client";
 import type { Class } from "@/types";
 
 export default function TeacherDashboardPage() {
@@ -11,69 +10,28 @@ export default function TeacherDashboardPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [className, setClassName] = useState("");
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
-  const supabase = createClientComponentClient();
 
   useEffect(() => {
-    checkAuthAndLoadClasses();
+    loadClasses();
   }, []);
 
-  const checkAuthAndLoadClasses = async () => {
-    // 테스트 모드 체크
-    const isTestMode = typeof window !== "undefined" && 
-      sessionStorage.getItem("test_teacher_mode") === "true";
-    
-    if (isTestMode) {
-      // 테스트 모드: 더미 데이터 표시
-      setClasses([
-        {
-          id: "test-class-1",
-          pin: "1234",
-          name: "테스트 학급 1반",
-          teacher_id: "test-teacher",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: "test-class-2",
-          pin: "5678",
-          name: "테스트 학급 2반",
-          teacher_id: "test-teacher",
-          created_at: new Date().toISOString(),
-        },
-      ]);
-      setLoading(false);
-      return;
-    }
-
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      router.push("/teacher/login");
-      return;
-    }
-
-    await loadClasses(user.id);
-  };
-
-  const loadClasses = async (teacherId: string) => {
+  const loadClasses = async () => {
     try {
-      const { data, error } = await supabase
-        .from("classes")
-        .select("*")
-        .eq("teacher_id", teacherId)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setClasses(data || []);
-    } catch (err) {
+      const res = await fetch("/api/classes");
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "학급 조회 실패");
+      }
+      const data = await res.json();
+      setClasses(data.classes || []);
+    } catch (err: any) {
       console.error("학급 로드 오류:", err);
+      setError(err.message || "학급을 불러올 수 없습니다.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const generatePin = (): string => {
-    return Math.floor(1000 + Math.random() * 9000).toString();
   };
 
   const createClass = async (e: React.FormEvent) => {
@@ -81,89 +39,26 @@ export default function TeacherDashboardPage() {
     if (!className.trim()) return;
 
     setCreating(true);
+    setError("");
     try {
-      // 테스트 모드 체크
-      const isTestMode = typeof window !== "undefined" && 
-        sessionStorage.getItem("test_teacher_mode") === "true";
-      
-      if (isTestMode) {
-        // 테스트 모드: 더미 클래스 추가
-        const newClass = {
-          id: `test-class-${Date.now()}`,
-          pin: Math.floor(1000 + Math.random() * 9000).toString(),
-          name: className.trim(),
-          teacher_id: "test-teacher",
-          created_at: new Date().toISOString(),
-        };
-        setClasses([newClass, ...classes]);
-        setClassName("");
-        setShowCreateForm(false);
-        setCreating(false);
-        return;
+      const res = await fetch("/api/classes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: className.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "학급 생성 실패");
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("로그인이 필요합니다.");
-
-      // 고유한 PIN 생성
-      let pin: string;
-      let isUnique = false;
-      let attempts = 0;
-      
-      while (!isUnique && attempts < 10) {
-        pin = generatePin();
-        const { data: existing } = await supabase
-          .from("classes")
-          .select("id")
-          .eq("pin", pin)
-          .single();
-        
-        if (!existing) {
-          isUnique = true;
-        } else {
-          attempts++;
-        }
-      }
-
-      if (!isUnique) {
-        throw new Error("PIN 생성에 실패했습니다. 다시 시도해주세요.");
-      }
-
-      const { data, error } = await supabase
-        .from("classes")
-        .insert({
-          pin: pin!,
-          name: className.trim(),
-          teacher_id: user.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setClasses([data, ...classes]);
+      setClasses([data.class, ...classes]);
       setClassName("");
       setShowCreateForm(false);
     } catch (err: any) {
-      alert(err.message || "학급 생성에 실패했습니다.");
+      setError(err.message || "학급 생성에 실패했습니다.");
     } finally {
       setCreating(false);
     }
-  };
-
-  const handleLogout = async () => {
-    // 테스트 모드 체크
-    const isTestMode = typeof window !== "undefined" && 
-      sessionStorage.getItem("test_teacher_mode") === "true";
-    
-    if (isTestMode) {
-      sessionStorage.removeItem("test_teacher_mode");
-      router.push("/");
-      return;
-    }
-
-    await supabase.auth.signOut();
-    router.push("/");
   };
 
   if (loading) {
@@ -180,12 +75,18 @@ export default function TeacherDashboardPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">교사 대시보드</h1>
           <button
-            onClick={handleLogout}
+            onClick={() => router.push("/")}
             className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
           >
-            로그아웃
+            홈으로
           </button>
         </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
+        )}
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
@@ -225,7 +126,10 @@ export default function TeacherDashboardPage() {
           )}
 
           {classes.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">생성된 학급이 없습니다.</p>
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-2">생성된 학급이 없습니다.</p>
+              <p className="text-sm text-gray-400">위의 &quot;+ 학급 생성&quot; 버튼으로 학급을 만들어 보세요.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {classes.map((classItem) => (
@@ -237,7 +141,7 @@ export default function TeacherDashboardPage() {
                     <div>
                       <h3 className="font-semibold text-lg">{classItem.name}</h3>
                       <p className="text-sm text-gray-500">
-                        PIN: <span className="font-mono font-bold text-blue-600">{classItem.pin}</span>
+                        PIN: <span className="font-mono font-bold text-blue-600 text-xl">{classItem.pin}</span>
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
                         생성일: {new Date(classItem.created_at).toLocaleDateString("ko-KR")}
@@ -246,7 +150,7 @@ export default function TeacherDashboardPage() {
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(classItem.pin);
-                        alert("PIN이 복사되었습니다!");
+                        alert(`PIN ${classItem.pin} 이 복사되었습니다! 학생들에게 알려주세요.`);
                       }}
                       className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300"
                     >
@@ -257,6 +161,15 @@ export default function TeacherDashboardPage() {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="font-semibold text-blue-800 mb-2">사용 방법</h3>
+          <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
+            <li>위에서 학급을 생성하면 4자리 PIN이 자동 발급됩니다.</li>
+            <li>학생들에게 PIN을 알려주세요.</li>
+            <li>학생은 홈 → &quot;학급 입장&quot; → PIN 입력 → 이름 입력으로 들어옵니다.</li>
+          </ol>
         </div>
       </div>
     </div>
