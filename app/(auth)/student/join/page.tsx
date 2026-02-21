@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { clearStudentSession } from "@/lib/session";
 
 export default function StudentJoinPage() {
   const [step, setStep] = useState<"pin" | "name">("pin");
@@ -11,6 +12,12 @@ export default function StudentJoinPage() {
   const [error, setError] = useState("");
   const [classId, setClassId] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    // 테스트/이전 세션이 남아 있으면 잘못된 student_id/class_id로 핀 생성이 실패할 수 있어
+    // 입장 화면 진입 시 한 번 초기화합니다.
+    clearStudentSession();
+  }, []);
 
   const handlePinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

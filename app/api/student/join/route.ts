@@ -25,18 +25,24 @@ export async function POST(request: NextRequest) {
         .from("classes")
         .select("id, name")
         .eq("pin", pin)
-        .limit(1);
+        .maybeSingle();
 
       if (error) {
         console.error("PIN 확인 오류:", error);
-        return NextResponse.json({ error: "PIN 확인에 실패했습니다." }, { status: 500 });
+        return NextResponse.json(
+          { error: `PIN 확인에 실패했습니다: ${error.message}` },
+          { status: 500 }
+        );
       }
 
-      if (!data || data.length === 0) {
-        return NextResponse.json({ error: "올바른 PIN을 입력해주세요." }, { status: 404 });
+      if (!data) {
+        return NextResponse.json(
+          { error: "올바른 PIN을 입력해주세요. (테스트 PIN이 아닌 실제 생성된 PIN인지 확인)" },
+          { status: 404 }
+        );
       }
 
-      return NextResponse.json({ classId: data[0].id, className: data[0].name });
+      return NextResponse.json({ classId: data.id, className: data.name });
     }
 
     if (step === "name") {
@@ -44,6 +50,21 @@ export async function POST(request: NextRequest) {
       const name = String(body?.name ?? "").trim();
       if (!classId || !name) {
         return NextResponse.json({ error: "classId와 name이 필요합니다." }, { status: 400 });
+      }
+
+      const { data: classData, error: classError } = await supabase
+        .from("classes")
+        .select("id")
+        .eq("id", classId)
+        .maybeSingle();
+      if (classError) {
+        return NextResponse.json({ error: `학급 확인 실패: ${classError.message}` }, { status: 500 });
+      }
+      if (!classData) {
+        return NextResponse.json(
+          { error: "학급 정보를 찾을 수 없습니다. PIN부터 다시 입력해주세요." },
+          { status: 400 }
+        );
       }
 
       const sessionId = generateSessionId();
@@ -59,7 +80,7 @@ export async function POST(request: NextRequest) {
 
       if (error) {
         console.error("학생 입장 생성 오류:", error);
-        return NextResponse.json({ error: "입장에 실패했습니다." }, { status: 500 });
+        return NextResponse.json({ error: `입장에 실패했습니다: ${error.message}` }, { status: 500 });
       }
 
       return NextResponse.json({ studentId: data.id, sessionId, classId });

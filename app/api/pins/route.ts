@@ -102,7 +102,10 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("핀 생성 오류:", error);
-      return NextResponse.json({ error: "생성 실패" }, { status: 500 });
+      return NextResponse.json(
+        { error: `생성 실패: ${error.message}` },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ pin: data });
