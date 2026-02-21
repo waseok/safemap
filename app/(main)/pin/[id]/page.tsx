@@ -3,16 +3,22 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import NaverMap from "@/components/Map/NaverMap";
-import FeedbackForm from "@/components/FeedbackForm";
 import EducationLinks from "@/components/EducationLinks";
 import { getStudentSessionId } from "@/lib/session";
 import type { SafetyPin, SafetyCategory } from "@/types";
+
+interface FeedbackData {
+  id: string;
+  feedback: string;
+  created_at: string;
+}
 
 export default function PinDetailPage() {
   const router = useRouter();
   const params = useParams();
   const pinId = params.id as string;
   const [pin, setPin] = useState<(SafetyPin & { students: { name: string } }) | null>(null);
+  const [feedbacks, setFeedbacks] = useState<FeedbackData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,78 +27,31 @@ export default function PinDetailPage() {
       router.push("/student/join");
       return;
     }
-
     loadPin();
+    loadFeedbacks();
   }, [pinId, router]);
 
   const loadPin = async () => {
     try {
-      // 테스트 모드: API 대신 더미 데이터 사용
-      const sessionId = getStudentSessionId();
-      if (sessionId === "test-session-id") {
-        const testPins: (SafetyPin & { students: { name: string } })[] = [
-          {
-            id: "test-pin-1",
-            class_id: "test-class-id",
-            student_id: "test-student-id",
-            location_type: "마을",
-            category: "교통안전",
-            title: "횡단보도 신호등 고장",
-            description: "신호등이 작동하지 않아 위험합니다.",
-            latitude: 37.5665,
-            longitude: 126.978,
-            address: "서울특별시 중구 세종대로",
-            image_url: "",
-            created_at: new Date().toISOString(),
-            students: { name: "테스트 학생" },
-          },
-          {
-            id: "test-pin-2",
-            class_id: "test-class-id",
-            student_id: "test-student-id",
-            location_type: "학교",
-            category: "생활안전",
-            title: "계단 난간 파손",
-            description: "3층 계단 난간이 느슨해져 있습니다.",
-            latitude: null,
-            longitude: null,
-            address: null,
-            image_url: "",
-            created_at: new Date().toISOString(),
-            students: { name: "테스트 학생" },
-          },
-          {
-            id: "test-pin-3",
-            class_id: "test-class-id",
-            student_id: "test-student-id",
-            location_type: "집",
-            category: "재난안전",
-            title: "배수구 막힘",
-            description: "아파트 앞 배수구가 막혀 있습니다.",
-            latitude: null,
-            longitude: null,
-            address: null,
-            image_url: "",
-            created_at: new Date().toISOString(),
-            students: { name: "테스트 학생" },
-          },
-        ];
-
-        const found = testPins.find((p) => p.id === pinId);
-        setPin(found || null);
-        setLoading(false);
-        return;
-      }
-
       const res = await fetch(`/api/pins/${pinId}`);
       if (!res.ok) throw new Error("핀 로드 실패");
-
       const data = await res.json();
       setPin(data.pin);
     } catch (err) {
       console.error("핀 로드 오류:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadFeedbacks = async () => {
+    try {
+      const res = await fetch(`/api/feedback?safety_pin_id=${pinId}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setFeedbacks(data.feedbacks || []);
+    } catch (err) {
+      console.error("피드백 로드 오류:", err);
     }
   };
 
@@ -107,7 +66,12 @@ export default function PinDetailPage() {
   if (!pin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div>핀을 찾을 수 없습니다.</div>
+        <div className="text-center">
+          <p className="text-gray-600 mb-2">핀을 찾을 수 없습니다.</p>
+          <button onClick={() => router.back()} className="text-blue-600 underline text-sm">
+            뒤로 가기
+          </button>
+        </div>
       </div>
     );
   }
@@ -151,6 +115,7 @@ export default function PinDetailPage() {
 
           {pin.image_url && (
             <div className="mb-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={pin.image_url}
                 alt={pin.title}
@@ -213,9 +178,23 @@ export default function PinDetailPage() {
             </button>
           </div>
 
+          {/* 교사 피드백 표시 (읽기 전용 - 학생이 볼 수 있음) */}
           <div className="mt-8 border-t pt-6">
             <h2 className="text-xl font-semibold mb-4">교사 피드백</h2>
-            <FeedbackForm safetyPinId={pin.id} />
+            {feedbacks.length === 0 ? (
+              <p className="text-sm text-gray-500">아직 교사 피드백이 없습니다.</p>
+            ) : (
+              <div className="space-y-3">
+                {feedbacks.map((fb) => (
+                  <div key={fb.id} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-gray-800 whitespace-pre-wrap">{fb.feedback}</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {new Date(fb.created_at).toLocaleString("ko-KR")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

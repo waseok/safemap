@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import PinList from "@/components/PinList";
 import { getStudentSessionId, getStudentId, getClassId } from "@/lib/session";
@@ -10,6 +10,36 @@ export default function MyPinsPage() {
   const router = useRouter();
   const [pins, setPins] = useState<(SafetyPin & { students: { name: string } })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const loadMyPins = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const classId = getClassId();
+      const studentId = getStudentId();
+
+      if (!classId || !studentId) {
+        setError("세션 정보가 없습니다. 다시 입장해주세요.");
+        return;
+      }
+
+      const res = await fetch(`/api/pins?class_id=${classId}&student_id=${studentId}`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `핀 로드 실패 (${res.status})`);
+      }
+
+      const data = await res.json();
+      setPins(data.pins || []);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "핀을 불러올 수 없습니다.";
+      console.error("핀 로드 오류:", err);
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const sessionId = getStudentSessionId();
@@ -17,88 +47,54 @@ export default function MyPinsPage() {
       router.push("/student/join");
       return;
     }
-
     loadMyPins();
-  }, [router]);
-
-  const loadMyPins = async () => {
-    try {
-      // 테스트 모드 체크
-      const isTestMode = getStudentSessionId() === "test-session-id";
-      
-      if (isTestMode) {
-        // 테스트 모드: 더미 데이터 표시
-        const testPins: (SafetyPin & { students: { name: string } })[] = [
-          {
-            id: "test-pin-1",
-            class_id: "test-class-id",
-            student_id: "test-student-id",
-            location_type: "마을",
-            category: "교통안전",
-            title: "횡단보도 신호등 고장",
-            description: "신호등이 작동하지 않아 위험합니다.",
-            latitude: 37.5665,
-            longitude: 126.978,
-            address: "서울특별시 중구 세종대로",
-            image_url: "",
-            created_at: new Date().toISOString(),
-            students: { name: "테스트 학생" },
-          },
-          {
-            id: "test-pin-2",
-            class_id: "test-class-id",
-            student_id: "test-student-id",
-            location_type: "학교",
-            category: "생활안전",
-            title: "계단 난간 파손",
-            description: "3층 계단 난간이 느슨해져 있습니다.",
-            latitude: null,
-            longitude: null,
-            address: null,
-            image_url: "",
-            created_at: new Date().toISOString(),
-            students: { name: "테스트 학생" },
-          },
-        ];
-        setPins(testPins);
-        setLoading(false);
-        return;
-      }
-
-      const classId = getClassId();
-      const studentId = getStudentId();
-      
-      if (!classId || !studentId) return;
-
-      const res = await fetch(`/api/pins?class_id=${classId}&student_id=${studentId}`);
-      if (!res.ok) throw new Error("핀 로드 실패");
-
-      const data = await res.json();
-      setPins(data.pins || []);
-    } catch (err) {
-      console.error("핀 로드 오류:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div>로딩 중...</div>
-      </div>
-    );
-  }
+  }, [router, loadMyPins]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold mb-4">내가 저장한 핀</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">내가 저장한 핀</h1>
+            <button
+              onClick={loadMyPins}
+              disabled={loading}
+              className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 disabled:opacity-50"
+            >
+              {loading ? "로딩 중..." : "새로고침"}
+            </button>
+          </div>
           <p className="text-sm text-gray-600 mb-6">
             내가 발견하고 등록한 안전 문제들을 확인하세요
           </p>
-          <PinList pins={pins} />
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+              <p className="text-red-700 text-sm">{error}</p>
+              <button
+                onClick={() => router.push("/student/join")}
+                className="mt-2 text-sm text-blue-600 underline"
+              >
+                다시 입장하기
+              </button>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="text-center py-8 text-gray-500">로딩 중...</div>
+          ) : pins.length === 0 && !error ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-2">아직 등록한 핀이 없습니다.</p>
+              <button
+                onClick={() => router.push("/create")}
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+              >
+                안전 문제 발견하기
+              </button>
+            </div>
+          ) : (
+            <PinList pins={pins} />
+          )}
         </div>
       </div>
     </div>

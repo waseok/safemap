@@ -40,11 +40,11 @@ CREATE TABLE safety_pins (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 교사 피드백 테이블
+-- 교사 피드백 테이블 (teacher_id는 선택: Supabase Auth 없이도 피드백 가능)
 CREATE TABLE teacher_feedbacks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   safety_pin_id UUID NOT NULL REFERENCES safety_pins(id) ON DELETE CASCADE,
-  teacher_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  teacher_id UUID DEFAULT NULL,
   feedback TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

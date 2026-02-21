@@ -17,17 +17,14 @@ export async function GET(request: NextRequest) {
       .from("teacher_feedbacks")
       .select("*")
       .eq("safety_pin_id", safetyPinId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
+      .order("created_at", { ascending: false });
 
-    if (error && error.code !== "PGRST116") {
-      // PGRST116은 결과가 없을 때 발생하는 오류
+    if (error) {
       console.error("피드백 조회 오류:", error);
-      return NextResponse.json({ error: "조회 실패" }, { status: 500 });
+      return NextResponse.json({ error: `조회 실패: ${error.message}` }, { status: 500 });
     }
 
-    return NextResponse.json({ feedback: data || null });
+    return NextResponse.json({ feedbacks: data || [], feedback: data?.[0] || null });
   } catch (error) {
     console.error("피드백 조회 오류:", error);
     return NextResponse.json({ error: "서버 오류" }, { status: 500 });
@@ -37,21 +34,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    // JWT로 인증 (cookies/SSR 제거 - Vercel 빌드 에러 방지)
-    const authHeader = request.headers.get("Authorization");
-    const token = authHeader?.replace(/^Bearer\s+/i, "");
-
-    if (!token) {
-      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
-    }
-
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-    if (authError || !user) {
-      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
-    }
-
     const body = await request.json();
-    const { safety_pin_id, feedback } = body;
+    const { safety_pin_id, feedback, class_id } = body;
 
     if (!safety_pin_id || !feedback) {
       return NextResponse.json(
@@ -60,17 +44,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 기존 피드백 확인
     const { data: existing } = await supabaseAdmin
       .from("teacher_feedbacks")
       .select("id")
       .eq("safety_pin_id", safety_pin_id)
-      .eq("teacher_id", user.id)
-      .single();
+      .maybeSingle();
 
     let result;
     if (existing) {
-      // 업데이트
       const { data, error } = await supabaseAdmin
         .from("teacher_feedbacks")
         .update({ feedback, updated_at: new Date().toISOString() })
@@ -78,27 +59,31 @@ export async function POST(request: NextRequest) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        return NextResponse.json({ error: `수정 실패: ${error.message}` }, { status: 500 });
+      }
       result = data;
     } else {
-      // 생성
       const { data, error } = await supabaseAdmin
         .from("teacher_feedbacks")
         .insert({
           safety_pin_id,
-          teacher_id: user.id,
+          teacher_id: null,
           feedback,
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        return NextResponse.json({ error: `생성 실패: ${error.message}` }, { status: 500 });
+      }
       result = data;
     }
 
     return NextResponse.json({ feedback: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "서버 오류";
     console.error("피드백 저장 오류:", error);
-    return NextResponse.json({ error: error.message || "서버 오류" }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
