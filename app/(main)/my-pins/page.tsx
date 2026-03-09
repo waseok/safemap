@@ -24,7 +24,7 @@ export default function MyPinsPage() {
         return;
       }
 
-      const res = await fetch(`/api/pins?class_id=${classId}&student_id=${studentId}`);
+      const res = await fetch(`/api/pins?class_id=${classId}`);
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error || `핀 로드 실패 (${res.status})`);
