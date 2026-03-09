@@ -58,25 +58,21 @@ export const getGeocode = async (address: string): Promise<{ lat: number; lng: n
 
   return new Promise((resolve) => {
     window.naver.maps.Service.geocode(
-      { address: address.trim() },
+      { query: address.trim() },
       (status: any, response: any) => {
         if (status !== window.naver.maps.Service.Status.OK) {
           resolve(null);
           return;
         }
-        const items = response.result?.items;
-        if (!items || items.length === 0) {
-          resolve(null);
-          return;
-        }
-        const point = items[0].point;
-        if (!point) {
+        // oapi v3 응답 형식: response.v2.addresses
+        const addresses = response.v2?.addresses;
+        if (!addresses || addresses.length === 0) {
           resolve(null);
           return;
         }
         resolve({
-          lat: typeof point.y === "number" ? point.y : parseFloat(point.y),
-          lng: typeof point.x === "number" ? point.x : parseFloat(point.x),
+          lat: parseFloat(addresses[0].y),
+          lng: parseFloat(addresses[0].x),
         });
       }
     );
