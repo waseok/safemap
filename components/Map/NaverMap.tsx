@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { loadNaverMapScript, getGeocode } from "@/lib/naver-map";
+import { loadNaverMapScript } from "@/lib/naver-map";
+
+async function fetchGeocode(query: string): Promise<{ lat: number; lng: number } | null> {
+  const res = await fetch(`/api/geocode?query=${encodeURIComponent(query)}`);
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.coords ?? null;
+}
 
 const STORAGE_RECENT_KEY = "safety-map-recent-search";
 const STORAGE_FAVORITES_KEY = "safety-map-favorites";
@@ -278,7 +285,7 @@ export default function NaverMap({
     const query = searchQuery.trim();
     setSearching(true);
     try {
-      const coords = await getGeocode(query);
+      const coords = await fetchGeocode(query);
       if (coords) {
         map.setCenter(new window.naver.maps.LatLng(coords.lat, coords.lng));
         map.setZoom(16);
@@ -392,7 +399,7 @@ export default function NaverMap({
                               type="button"
                               onClick={() => {
                                 setSearchQuery(s);
-                                getGeocode(s).then((coords) => {
+                                fetchGeocode(s).then((coords) => {
                                   if (coords && map && window.naver?.maps) {
                                     map.setCenter(new window.naver.maps.LatLng(coords.lat, coords.lng));
                                     map.setZoom(16);

@@ -67,7 +67,24 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // 같은 학급에 같은 이름의 학생이 이미 있으면 기존 student_id 재사용
+      const { data: existing } = await supabase
+        .from("students")
+        .select("id")
+        .eq("class_id", classId)
+        .eq("name", name)
+        .maybeSingle();
+
       const sessionId = generateSessionId();
+
+      if (existing) {
+        await supabase
+          .from("students")
+          .update({ session_id: sessionId })
+          .eq("id", existing.id);
+        return NextResponse.json({ studentId: existing.id, sessionId, classId });
+      }
+
       const { data, error } = await supabase
         .from("students")
         .insert({

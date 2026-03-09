@@ -68,9 +68,17 @@ export default function PinList({ pins }: PinListProps) {
                 {getLocationName(pin)}
               </p>
               {pin.description && (
-                <p className="text-sm text-gray-500 line-clamp-2 mb-2">
+                <p className="text-sm text-gray-700 mb-2 whitespace-pre-wrap">
                   {pin.description}
                 </p>
+              )}
+              {pin.image_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={pin.image_url}
+                  alt={pin.title}
+                  className="w-full max-h-48 object-cover rounded-lg mb-2"
+                />
               )}
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-400">
