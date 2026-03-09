@@ -1,28 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { loadNaverMapScript } from "@/lib/naver-map";
-
-function fetchGeocode(query: string): Promise<{ lat: number; lng: number } | null> {
-  return new Promise((resolve) => {
-    if (!window.naver?.maps?.Service) {
-      resolve(null);
-      return;
-    }
-    window.naver.maps.Service.geocode({ query }, (status: any, response: any) => {
-      if (status !== window.naver.maps.Service.Status.OK) {
-        resolve(null);
-        return;
-      }
-      const addresses = response?.v2?.addresses ?? [];
-      if (addresses.length === 0) {
-        resolve(null);
-        return;
-      }
-      resolve({ lat: parseFloat(addresses[0].y), lng: parseFloat(addresses[0].x) });
-    });
-  });
-}
+import { loadNaverMapScript, getGeocode as fetchGeocode } from "@/lib/naver-map";
 
 const STORAGE_RECENT_KEY = "safety-map-recent-search";
 const STORAGE_FAVORITES_KEY = "safety-map-favorites";
