@@ -21,7 +21,7 @@ const NAVER_MAP_SCRIPT_URL =
 
 export function getNaverMapScriptUrl(): string {
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID || "";
-  return `${NAVER_MAP_SCRIPT_URL}?ncpKeyId=${clientId}`;
+  return `${NAVER_MAP_SCRIPT_URL}?ncpKeyId=${clientId}&submodules=geocoder`;
 }
 
 export const loadNaverMapScript = (): Promise<void> => {
