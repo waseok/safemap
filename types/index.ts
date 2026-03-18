@@ -46,6 +46,9 @@ export interface SafetyPin {
   category: SafetyCategory;
   title: string;
   description: string;
+  danger_level: number | null;
+  cause: string | null;
+  predicted_accident: string | null;
   latitude: number | null;
   longitude: number | null;
   address: string | null;

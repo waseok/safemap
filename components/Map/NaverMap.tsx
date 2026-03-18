@@ -342,7 +342,9 @@ export default function NaverMap({
         style={{
           width: "100%",
           height,
-          cursor: selectable ? "crosshair" : "",
+          cursor: selectable
+            ? "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' viewBox='0 0 28 36'%3E%3Cpath d='M14 0C8.5 0 4 4.5 4 10c0 7.5 10 18 10 18s10-10.5 10-18c0-5.5-4.5-10-10-10zm0 14c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z' fill='%23E53935' stroke='white' stroke-width='1'/%3E%3C/svg%3E\") 14 32, crosshair"
+            : "",
         }}
       />
       {/* 지도 버튼 오버레이 */}
