@@ -194,6 +194,9 @@ function AddPinModal({
   const [category, setCategory] = useState<SafetyCategory>("생활안전");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [dangerLevel, setDangerLevel] = useState<number>(0);
+  const [cause, setCause] = useState("");
+  const [predictedAccident, setPredictedAccident] = useState("");
   const [address, setAddress] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -256,6 +259,9 @@ function AddPinModal({
           category,
           title: title.trim(),
           description: description.trim(),
+          danger_level: dangerLevel || null,
+          cause: cause.trim() || null,
+          predicted_accident: predictedAccident.trim() || null,
           latitude: location.lat,
           longitude: location.lng,
           address: address || null,
@@ -328,6 +334,51 @@ function AddPinModal({
               placeholder="자세한 설명"
             />
           </div>
+          {/* 분석 질문 */}
+          <div className="border border-orange-100 rounded-lg p-4 space-y-3 bg-orange-50">
+            <p className="text-sm font-semibold text-orange-700">🔍 조금 더 생각해봐요</p>
+            <div>
+              <label className="block text-sm font-medium mb-1">위험도가 어느 정도라고 생각하나요?</label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((level) => (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => setDangerLevel(dangerLevel === level ? 0 : level)}
+                    className={`text-2xl transition-transform hover:scale-110 ${level <= dangerLevel ? "opacity-100" : "opacity-30"}`}
+                  >
+                    ⭐
+                  </button>
+                ))}
+                {dangerLevel > 0 && (
+                  <span className="ml-1 text-sm text-gray-500 self-center">
+                    {["", "낮음", "조금 낮음", "보통", "조금 높음", "매우 높음"][dangerLevel]}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">이 위험은 왜 생겼을까요?</label>
+              <textarea
+                value={cause}
+                onChange={(e) => setCause(e.target.value)}
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                placeholder="예: 오랫동안 수리가 안 됐기 때문에..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">어떤 사고가 일어날 수 있나요?</label>
+              <textarea
+                value={predictedAccident}
+                onChange={(e) => setPredictedAccident(e.target.value)}
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                placeholder="예: 넘어져서 다칠 수 있어요..."
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">사진</label>
             <p className="text-xs text-gray-500 mb-2">앨범에서 선택하거나 카메라로 촬영하세요</p>

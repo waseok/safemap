@@ -328,7 +328,7 @@ export default function NaverMap({
   };
 
   return (
-    <div className="relative" style={{ width: "100%", height }}>
+    <div className={`relative ${selectable ? "selectable-map-cursor" : ""}`} style={{ width: "100%", height }}>
       {!isLoaded && (
         <div
           className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg z-10"
@@ -339,13 +339,7 @@ export default function NaverMap({
       )}
       <div
         ref={mapRef}
-        style={{
-          width: "100%",
-          height,
-          cursor: selectable
-            ? "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' viewBox='0 0 28 36'%3E%3Cpath d='M14 0C8.5 0 4 4.5 4 10c0 7.5 10 18 10 18s10-10.5 10-18c0-5.5-4.5-10-10-10zm0 14c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z' fill='%23E53935' stroke='white' stroke-width='1'/%3E%3C/svg%3E\") 14 32, crosshair"
-            : "",
-        }}
+        style={{ width: "100%", height }}
       />
       {/* 지도 버튼 오버레이 */}
       {(showMyLocationButton || showSearchButton) && isLoaded && (
