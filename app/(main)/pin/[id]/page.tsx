@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import NaverMap from "@/components/Map/NaverMap";
 import EducationLinks from "@/components/EducationLinks";
+import SafetyQuiz from "@/components/SafetyQuiz";
 import { getStudentSessionId } from "@/lib/session";
 import type { SafetyPin, SafetyCategory } from "@/types";
 
@@ -320,6 +321,34 @@ export default function PinDetailPage() {
                 </div>
               )}
 
+              {/* A. 분석 질문 답변 표시 */}
+              {((pin as any).danger_level || (pin as any).cause || (pin as any).predicted_accident) && (
+                <div className="mb-4 p-4 bg-orange-50 border border-orange-100 rounded-lg space-y-2">
+                  <p className="text-sm font-semibold text-orange-700">🔍 분석 내용</p>
+                  {(pin as any).danger_level && (
+                    <div className="text-sm">
+                      <span className="text-gray-600">위험도: </span>
+                      <span>{"⭐".repeat((pin as any).danger_level)}</span>
+                      <span className="ml-1 text-gray-500">
+                        ({["", "낮음", "조금 낮음", "보통", "조금 높음", "매우 높음"][(pin as any).danger_level]})
+                      </span>
+                    </div>
+                  )}
+                  {(pin as any).cause && (
+                    <div className="text-sm">
+                      <span className="text-gray-600 font-medium">왜 생겼을까요? </span>
+                      <span className="text-gray-800">{(pin as any).cause}</span>
+                    </div>
+                  )}
+                  {(pin as any).predicted_accident && (
+                    <div className="text-sm">
+                      <span className="text-gray-600 font-medium">예상 사고: </span>
+                      <span className="text-gray-800">{(pin as any).predicted_accident}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {pin.location_type === "마을" && pin.latitude && pin.longitude && (
                 <div className="mb-4">
                   <h2 className="font-semibold mb-2">위치</h2>
@@ -341,8 +370,13 @@ export default function PinDetailPage() {
                 </div>
               )}
 
-              <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="mb-2 p-3 bg-green-50 rounded-lg border border-green-200">
                 <EducationLinks category={pin.category as SafetyCategory} />
+              </div>
+
+              {/* C. 카테고리별 안전 퀴즈 */}
+              <div className="mb-4">
+                <SafetyQuiz category={pin.category as SafetyCategory} />
               </div>
 
               <div className="border-t pt-4 mt-4">

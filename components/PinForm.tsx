@@ -18,6 +18,9 @@ export default function PinForm({ onSuccess }: PinFormProps) {
   const [category, setCategory] = useState<SafetyCategory | "">("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [dangerLevel, setDangerLevel] = useState<number>(0);
+  const [cause, setCause] = useState("");
+  const [predictedAccident, setPredictedAccident] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
@@ -103,6 +106,9 @@ export default function PinForm({ onSuccess }: PinFormProps) {
           category,
           title: title.trim(),
           description: description.trim(),
+          danger_level: dangerLevel || null,
+          cause: cause.trim() || null,
+          predicted_accident: predictedAccident.trim() || null,
           latitude: locationType === "마을" ? selectedLocation?.lat : null,
           longitude: locationType === "마을" ? selectedLocation?.lng : null,
           address: locationType === "마을" ? address : null,
@@ -221,6 +227,62 @@ export default function PinForm({ onSuccess }: PinFormProps) {
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="안전 문제에 대한 자세한 설명을 입력하세요"
         />
+      </div>
+
+      {/* A. 분석 질문 */}
+      <div className="border border-orange-100 rounded-lg p-4 space-y-4 bg-orange-50">
+        <p className="text-sm font-semibold text-orange-700">🔍 조금 더 생각해봐요</p>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            위험도가 어느 정도라고 생각하나요?
+          </label>
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map((level) => (
+              <button
+                key={level}
+                type="button"
+                onClick={() => setDangerLevel(dangerLevel === level ? 0 : level)}
+                className={`text-2xl transition-transform hover:scale-110 ${
+                  level <= dangerLevel ? "opacity-100" : "opacity-30"
+                }`}
+              >
+                ⭐
+              </button>
+            ))}
+            {dangerLevel > 0 && (
+              <span className="ml-2 text-sm text-gray-500 self-center">
+                {["", "낮음", "조금 낮음", "보통", "조금 높음", "매우 높음"][dangerLevel]}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            이 위험은 왜 생겼을까요?
+          </label>
+          <textarea
+            value={cause}
+            onChange={(e) => setCause(e.target.value)}
+            rows={2}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            placeholder="예: 오랫동안 수리가 안 됐기 때문에, 사람들이 규칙을 지키지 않아서..."
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            어떤 사고가 일어날 수 있나요?
+          </label>
+          <textarea
+            value={predictedAccident}
+            onChange={(e) => setPredictedAccident(e.target.value)}
+            rows={2}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            placeholder="예: 넘어져서 다칠 수 있어요, 차에 치일 위험이 있어요..."
+          />
+        </div>
       </div>
 
       <div>
