@@ -322,28 +322,28 @@ export default function PinDetailPage() {
               )}
 
               {/* A. 분석 질문 답변 표시 */}
-              {((pin as any).danger_level || (pin as any).cause || (pin as any).predicted_accident) && (
+              {(pin.danger_level || pin.cause || pin.predicted_accident) && (
                 <div className="mb-4 p-4 bg-orange-50 border border-orange-100 rounded-lg space-y-2">
                   <p className="text-sm font-semibold text-orange-700">🔍 분석 내용</p>
-                  {(pin as any).danger_level && (
+                  {pin.danger_level && (
                     <div className="text-sm">
                       <span className="text-gray-600">위험도: </span>
-                      <span>{"⭐".repeat((pin as any).danger_level)}</span>
+                      <span>{"⭐".repeat(pin.danger_level)}</span>
                       <span className="ml-1 text-gray-500">
-                        ({["", "낮음", "조금 낮음", "보통", "조금 높음", "매우 높음"][(pin as any).danger_level]})
+                        ({["", "낮음", "조금 낮음", "보통", "조금 높음", "매우 높음"][pin.danger_level]})
                       </span>
                     </div>
                   )}
-                  {(pin as any).cause && (
+                  {pin.cause && (
                     <div className="text-sm">
                       <span className="text-gray-600 font-medium">왜 생겼을까요? </span>
-                      <span className="text-gray-800">{(pin as any).cause}</span>
+                      <span className="text-gray-800">{pin.cause}</span>
                     </div>
                   )}
-                  {(pin as any).predicted_accident && (
+                  {pin.predicted_accident && (
                     <div className="text-sm">
                       <span className="text-gray-600 font-medium">예상 사고: </span>
-                      <span className="text-gray-800">{(pin as any).predicted_accident}</span>
+                      <span className="text-gray-800">{pin.predicted_accident}</span>
                     </div>
                   )}
                 </div>
