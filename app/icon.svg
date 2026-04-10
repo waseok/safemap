@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Shield background -->
+  <path d="M50,6 L90,20 L90,60 Q88,88 50,96 Q12,88 10,60 L10,20 Z"
+        fill="#E3F2FD" stroke="#1565C0" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Inner shield gradient -->
+  <path d="M50,14 L83,26 L83,60 Q81,83 50,90 Q19,83 17,60 L17,26 Z"
+        fill="#BBDEFB" stroke="none"/>
+  <!-- S letter -->
+  <text x="50" y="72" text-anchor="middle"
+        font-family="Arial Black, Impact, sans-serif"
+        font-size="58" font-weight="900" fill="#1565C0">S</text>
+</svg>
