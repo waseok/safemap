@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import PinList from "@/components/PinList";
-import { getStudentSessionId, getStudentId, getClassId } from "@/lib/session";
+import { getStudentSessionId, getStudentId, getClassCode, getClassId } from "@/lib/session";
 import type { SafetyPin } from "@/types";
+import { getClassRoute } from "@/lib/explorer";
 
 export default function MyPinsPage() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function MyPinsPage() {
         return;
       }
 
-      const res = await fetch(`/api/pins?class_id=${classId}`);
+      const res = await fetch(`/api/pins?class_id=${classId}&student_id=${studentId}`);
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error || `핀 로드 실패 (${res.status})`);
@@ -86,7 +87,10 @@ export default function MyPinsPage() {
             <div className="text-center py-8">
               <p className="text-gray-500 mb-2">아직 등록한 핀이 없습니다.</p>
               <button
-                onClick={() => router.push("/create")}
+                onClick={() => {
+                  const classCode = getClassCode();
+                  router.push(classCode ? getClassRoute(classCode, "create") : "/student/join");
+                }}
                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
               >
                 안전 문제 발견하기

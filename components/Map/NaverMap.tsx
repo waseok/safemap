@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { loadNaverMapScript, getGeocode as fetchGeocode } from "@/lib/naver-map";
+import { getExplorerCategoryByDb } from "@/lib/explorer";
 
 const STORAGE_RECENT_KEY = "safety-map-recent-search";
 const STORAGE_FAVORITES_KEY = "safety-map-favorites";
@@ -26,6 +27,7 @@ interface NaverMapProps {
     title?: string;
     category?: string;
     description?: string;
+    studentName?: string;
     onClick?: () => void;
   }>;
   height?: string;
@@ -202,29 +204,10 @@ export default function NaverMap({
     infoWindowsRef.current = [];
     openInfoWindowRef.current = null;
 
-    const categoryColors: Record<string, string> = {
-      생활안전: "#FF9800",
-      교통안전: "#E53935",
-      응급처치: "#E91E63",
-      "폭력예방 및 신변보호": "#9C27B0",
-      "약물 및 사이버 중독 예방": "#673AB7",
-      재난안전: "#2196F3",
-      직업안전: "#009688",
-    };
-
-    const categoryIcons: Record<string, string> = {
-      생활안전: "🏠",
-      교통안전: "🚗",
-      응급처치: "🏥",
-      "폭력예방 및 신변보호": "🛡️",
-      "약물 및 사이버 중독 예방": "💊",
-      재난안전: "⚠️",
-      직업안전: "⚙️",
-    };
-
     markers.forEach((marker) => {
-      const color = categoryColors[marker.category || "생활안전"] ?? "#757575";
-      const icon = categoryIcons[marker.category || ""] || "📍";
+      const categoryUi = getExplorerCategoryByDb(marker.category);
+      const color = categoryUi.accentColor;
+      const icon = categoryUi.mapIcon;
 
       const markerInstance = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(marker.lat, marker.lng),
@@ -236,16 +219,16 @@ export default function NaverMap({
               <div style="
                 background:${color};
                 border:3px solid #fff;
-                border-radius:50% 50% 50% 0;
-                width:32px;height:32px;
-                transform:rotate(-45deg);
-                box-shadow:0 3px 8px rgba(0,0,0,.35);
+                border-radius:18px;
+                width:42px;height:42px;
+                box-shadow:0 10px 22px rgba(15,23,42,.24);
                 display:flex;align-items:center;justify-content:center;
               ">
-                <span style="transform:rotate(45deg);font-size:14px;line-height:1;">${icon}</span>
+                <span style="font-size:20px;line-height:1;">${icon}</span>
               </div>
+              <div style="width:10px;height:10px;border-radius:999px;background:${color};border:2px solid #fff;margin-top:-6px;"></div>
             </div>`,
-          anchor: new window.naver.maps.Point(16, 34),
+          anchor: new window.naver.maps.Point(21, 46),
         },
       });
 
@@ -259,7 +242,7 @@ export default function NaverMap({
             <span style="font-size:24px;line-height:1.1;flex-shrink:0;">${icon}</span>
             <div style="flex:1;min-width:0;">
               <div style="font-weight:700;font-size:13px;color:#111827;word-break:break-word;line-height:1.3;">${marker.title || ""}</div>
-              <div style="font-size:11px;color:#6b7280;margin-top:2px;">${marker.category || ""}</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:2px;">${categoryUi.label}${marker.studentName ? ` · ${marker.studentName}` : ""}</div>
             </div>
           </div>
           ${descHtml}
