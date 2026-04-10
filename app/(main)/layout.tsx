@@ -55,7 +55,7 @@ export default function MainLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef6ff_42%,#f8fff9_100%)]">
+    <div className="min-h-screen bg-[#f3f8ff]">
       <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
@@ -64,9 +64,7 @@ export default function MainLayout({
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">SAFE Explorer</p>
-              <p className="text-sm font-bold text-slate-800">
-                안전 탐사 지도 {classCode ? `· ${classCode}반` : ""}
-              </p>
+              <p className="text-sm font-bold text-slate-800">안전 탐사 지도</p>
             </div>
           </div>
 

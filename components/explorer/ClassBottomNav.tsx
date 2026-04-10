@@ -30,7 +30,7 @@ export default function ClassBottomNav({ classCode }: ClassBottomNavProps) {
               href={href}
               className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[1.3rem] px-2 py-3 text-[11px] font-bold transition ${
                 active
-                  ? "bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md"
+                  ? "bg-blue-500 text-white shadow-sm"
                   : "text-slate-500 hover:bg-slate-50"
               }`}
             >

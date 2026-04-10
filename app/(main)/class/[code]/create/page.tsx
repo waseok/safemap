@@ -79,10 +79,10 @@ export default function ClassCreatePage() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-[2rem] bg-gradient-to-br from-blue-600 to-emerald-500 p-5 text-white shadow-lg">
-        <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-100">핀 등록</p>
-        <h1 className="mt-2 text-2xl font-black">지금 서 있는 자리에서 바로 기록하기</h1>
-        <p className="mt-2 text-sm leading-6 text-blue-50">
+      <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">핀 등록</p>
+        <h1 className="mt-2 text-2xl font-black text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
           GPS로 현재 위치를 가져와 자동으로 핀을 준비했어요. 사진과 해결 아이디어만 채우면 끝이에요.
         </p>
       </section>
@@ -133,7 +133,7 @@ export default function ClassCreatePage() {
         <button
           type="button"
           onClick={() => setShowWizard(true)}
-          className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-gradient-to-r from-blue-600 to-emerald-500 px-6 py-4 text-base font-black text-white shadow-lg"
+          className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-blue-500 px-6 py-4 text-base font-black text-white hover:bg-blue-600"
         >
           <span className="text-xl">📝</span>
           이 위치로 탐사 기록 시작

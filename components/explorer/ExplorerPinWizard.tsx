@@ -155,7 +155,7 @@ export default function ExplorerPinWizard({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/55 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 bg-blue-200/35 backdrop-blur-sm">
       <div className="flex min-h-full items-end justify-center p-0 sm:items-center sm:p-6">
         <div className="animate-sheet-up w-full max-w-lg rounded-t-[2rem] bg-white p-5 shadow-2xl sm:rounded-[2rem]">
           <div className="mb-5 flex items-start justify-between gap-4">
@@ -181,7 +181,7 @@ export default function ExplorerPinWizard({
               <div key={item} className="flex-1">
                 <div
                   className={`h-2 rounded-full transition ${
-                    index <= step ? "bg-gradient-to-r from-blue-600 to-emerald-500" : "bg-slate-100"
+                    index <= step ? "bg-blue-500" : "bg-slate-100"
                   }`}
                 />
               </div>
@@ -240,14 +240,14 @@ export default function ExplorerPinWizard({
                 <button
                   type="button"
                   onClick={() => cameraInputRef.current?.click()}
-                  className="rounded-[1.4rem] bg-blue-600 px-4 py-4 font-bold text-white shadow-lg"
+                  className="rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white"
                 >
                   카메라로 찍기
                 </button>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-[1.4rem] bg-emerald-500 px-4 py-4 font-bold text-white shadow-lg"
+                  className="rounded-[1.4rem] bg-[#e7f1ff] px-4 py-4 font-bold text-blue-700"
                 >
                   앨범에서 고르기
                 </button>
@@ -365,7 +365,7 @@ export default function ExplorerPinWizard({
                   onChange={(event) => setProposal(event.target.value)}
                   rows={4}
                   placeholder="예: 안내 표지판을 더 크게 만들고, 선생님이나 구청에 알려서 빨리 고치면 좋아요."
-                  className="w-full rounded-[1.4rem] border border-slate-200 px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -389,7 +389,7 @@ export default function ExplorerPinWizard({
               <button
                 type="button"
                 onClick={goNext}
-                className="flex-1 rounded-[1.4rem] bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-4 font-bold text-white shadow-lg"
+                className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white"
               >
                 다음
               </button>
@@ -398,7 +398,7 @@ export default function ExplorerPinWizard({
                 type="button"
                 disabled={loading}
                 onClick={handleSubmit}
-                className="flex-1 rounded-[1.4rem] bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-4 font-bold text-white shadow-lg disabled:opacity-50"
+                className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white disabled:opacity-50"
               >
                 {loading ? "저장 중..." : "탐사 기록 완료"}
               </button>
