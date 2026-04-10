@@ -59,7 +59,7 @@ export default function MainLayout({
             {/* Logo + title */}
             <Link href="/map" className="flex items-center gap-2 shrink-0">
               <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow">
-                <Image src="/logo.svg" alt="SAFE" width={26} height={26} className="object-contain" />
+                <Image src="/logo.png" alt="SAFE" width={26} height={26} className="object-contain" />
               </div>
               <span className="text-white font-bold text-sm hidden sm:block tracking-tight">
                 안전 탐사 지도

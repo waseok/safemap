@@ -14,7 +14,7 @@ export default function Home() {
       <div className="mb-8 relative">
         <div className="w-44 h-44 md:w-52 md:h-52 bg-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-blue-300/40">
           <Image
-            src="/logo.svg"
+            src="/logo.png"
             alt="SAFE 프로젝트 로고"
             width={160}
             height={160}
