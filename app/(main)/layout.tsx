@@ -55,34 +55,37 @@ export default function MainLayout({
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-blue-900 shadow-lg sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
-          <div className="flex justify-between items-center h-14">
+          <div className="flex items-center h-14 gap-2 sm:gap-3">
             {/* Logo + title */}
-            <Link href="/map" className="flex items-center gap-2 shrink-0">
+            <Link href="/map" className="flex items-center gap-2 shrink-0 mr-1 sm:mr-2">
               <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow">
                 <Image src="/logo.png" alt="SAFE" width={26} height={26} className="object-contain" />
               </div>
-              <span className="text-white font-bold text-sm hidden sm:block tracking-tight">
+              <span className="text-white font-bold text-sm hidden sm:block tracking-tight whitespace-nowrap">
                 안전 탐사 지도
               </span>
             </Link>
 
-            {/* Nav items */}
+            {/* Nav items — left-aligned after logo */}
             <div className="flex gap-0.5 sm:gap-1">
               {navItems.map(({ href, label, emoji }) => (
                 <Link
                   key={href}
                   href={href}
-                  className={`flex items-center gap-1 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-1 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                     pathname === href
-                      ? "bg-blue-600 text-white shadow-inner"
+                      ? "bg-blue-500 text-white shadow-inner"
                       : "text-blue-200 hover:bg-blue-800 hover:text-white"
                   }`}
                 >
                   <span className="text-sm sm:text-base">{emoji}</span>
-                  <span className="hidden xs:inline sm:inline">{label}</span>
+                  <span>{label}</span>
                 </Link>
               ))}
             </div>
+
+            {/* Spacer */}
+            <div className="flex-1" />
 
             {/* Logout */}
             <button

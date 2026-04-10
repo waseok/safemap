@@ -12,12 +12,12 @@ export default function Home() {
 
       {/* Logo */}
       <div className="mb-8 relative">
-        <div className="w-44 h-44 md:w-52 md:h-52 bg-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-blue-300/40">
+        <div className="w-56 h-56 md:w-64 md:h-64 bg-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-blue-300/40">
           <Image
             src="/logo.png"
             alt="SAFE 프로젝트 로고"
-            width={160}
-            height={160}
+            width={210}
+            height={210}
             className="object-contain p-2"
             priority
           />
@@ -39,23 +39,23 @@ export default function Home() {
       <div className="w-full max-w-xs space-y-4">
         <Link
           href="/teacher/dashboard"
-          className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-white text-blue-900 rounded-2xl text-base font-bold shadow-xl hover:bg-blue-50 transition-all duration-200 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
+          className="flex items-center justify-center gap-3 w-full py-5 px-6 bg-white text-blue-900 rounded-2xl text-xl font-extrabold shadow-xl hover:bg-blue-50 transition-all duration-200 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
         >
-          <span className="text-xl">👩‍🏫</span>
+          <span className="text-2xl">👩‍🏫</span>
           교사 입장
         </Link>
 
         <Link
           href="/student/join"
-          className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-green-500 text-white rounded-2xl text-base font-bold shadow-xl hover:bg-green-400 transition-all duration-200 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
+          className="flex items-center justify-center gap-3 w-full py-5 px-6 bg-green-500 text-white rounded-2xl text-xl font-extrabold shadow-xl hover:bg-green-400 transition-all duration-200 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
         >
-          <span className="text-xl">🎒</span>
+          <span className="text-2xl">🎒</span>
           학급 입장
         </Link>
       </div>
 
       {/* Footer */}
-      <p className="mt-12 text-blue-300 text-xs text-center">
+      <p className="mt-12 text-white/80 text-sm font-semibold text-center tracking-wide">
         SAFE 프로젝트 · 안전문해력 향상 프로그램
       </p>
     </div>

@@ -85,14 +85,18 @@ export default function StudentJoinPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">학급 입장</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-600 to-blue-400 p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+        <div className="text-center mb-6">
+          <div className="text-4xl mb-2">🎒</div>
+          <h1 className="text-2xl font-extrabold text-blue-700">학급 입장</h1>
+          <p className="text-sm text-blue-400 mt-1">선생님께 받은 PIN 번호를 입력하세요</p>
+        </div>
 
         {step === "pin" ? (
-          <form onSubmit={handlePinSubmit} className="space-y-4">
+          <form onSubmit={handlePinSubmit} className="space-y-5">
             <div>
-              <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="pin" className="block text-sm font-semibold text-gray-600 mb-2">
                 PIN 번호 (4자리)
               </label>
               <input
@@ -105,28 +109,28 @@ export default function StudentJoinPage() {
                 }}
                 required
                 maxLength={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-2xl font-mono tracking-widest"
+                className="w-full px-4 py-4 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-3xl font-mono tracking-[0.5em] text-blue-800"
                 placeholder="0000"
               />
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm">{error}</div>
+              <div className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</div>
             )}
 
             <button
               type="submit"
               disabled={loading || pin.length !== 4}
-              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-500 hover:bg-blue-400 text-white py-4 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
             >
-              {loading ? "확인 중..." : "다음"}
+              {loading ? "확인 중..." : "다음 →"}
             </button>
           </form>
         ) : (
-          <form onSubmit={handleNameSubmit} className="space-y-4">
+          <form onSubmit={handleNameSubmit} className="space-y-5">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                이름 (핀을 올릴 때 표시됩니다)
+              <label htmlFor="name" className="block text-sm font-semibold text-gray-600 mb-2">
+                이름
               </label>
               <input
                 id="name"
@@ -134,16 +138,16 @@ export default function StudentJoinPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-4 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-blue-800"
                 placeholder="이름을 입력하세요"
               />
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm">{error}</div>
+              <div className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</div>
             )}
 
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => {
@@ -151,24 +155,24 @@ export default function StudentJoinPage() {
                   setName("");
                   setError("");
                 }}
-                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md hover:bg-gray-300"
+                className="flex-1 bg-gray-100 text-gray-600 py-4 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
               >
-                이전
+                ← 이전
               </button>
               <button
                 type="submit"
                 disabled={loading || !name.trim()}
-                className="flex-1 bg-green-500 text-white py-2 rounded-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-2 flex-grow bg-blue-500 hover:bg-blue-400 text-white py-4 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
               >
-                {loading ? "입장 중..." : "입장"}
+                {loading ? "입장 중..." : "입장하기 🚀"}
               </button>
             </div>
           </form>
         )}
 
         <div className="mt-6 text-center">
-          <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
-            홈으로 돌아가기
+          <a href="/" className="text-sm text-blue-400 hover:text-blue-600 font-medium">
+            ← 홈으로 돌아가기
           </a>
         </div>
       </div>
