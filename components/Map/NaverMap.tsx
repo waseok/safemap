@@ -354,12 +354,12 @@ export default function NaverMap({
   };
 
   const handleSearch = async () => {
-    if (!searchQuery.trim() || !map || !window.naver?.maps) return;
+    if (!searchQuery.trim() || !map) return;
     const query = searchQuery.trim();
     setSearching(true);
     try {
       const coords = await fetchGeocode(query);
-      if (coords) {
+      if (coords && window.naver?.maps) {
         map.setCenter(new window.naver.maps.LatLng(coords.lat, coords.lng));
         map.setZoom(16);
         onCenterChange?.(coords.lat, coords.lng);
@@ -369,10 +369,10 @@ export default function NaverMap({
         setSearchOpen(false);
         setSearchQuery("");
       } else {
-        alert("검색 결과를 찾을 수 없습니다.");
+        alert(`"${query}" 검색 결과를 찾을 수 없습니다. 주소를 더 자세히 입력해보세요.`);
       }
     } catch (err) {
-      alert("검색에 실패했습니다.");
+      alert("위치 검색에 실패했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setSearching(false);
     }
@@ -473,6 +473,8 @@ export default function NaverMap({
                                     map.setCenter(new window.naver.maps.LatLng(coords.lat, coords.lng));
                                     map.setZoom(16);
                                     onCenterChange?.(coords.lat, coords.lng);
+                                    setSearchOpen(false);
+                                    setSearchQuery("");
                                   }
                                 });
                               }}

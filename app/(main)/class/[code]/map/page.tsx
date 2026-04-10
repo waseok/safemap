@@ -17,6 +17,7 @@ export default function ClassMapPage() {
   const classCode = String(params?.code || SAFE_CLASS_CODE);
   const { pins, loading, error, reload } = useClassPins({ locationType: "마을" });
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+  const [createMode, setCreateMode] = useState(false);
   const [draftLocation, setDraftLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [celebration, setCelebration] = useState("");
 
@@ -54,28 +55,6 @@ export default function ClassMapPage() {
     };
   }, [celebration]);
 
-  const handleCreateClick = () => {
-    if (!navigator.geolocation) {
-      setDraftLocation(mapCenter);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const nextLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setMapCenter(nextLocation);
-        setDraftLocation(nextLocation);
-      },
-      () => {
-        setDraftLocation(mapCenter);
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
-  };
-
   const summary = useMemo(() => {
     if (loading) {
       return "지도를 준비하는 중이에요...";
@@ -91,8 +70,8 @@ export default function ClassMapPage() {
       <div className="rounded-[1.8rem] border border-blue-100 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">Class Code</p>
-            <h2 className="mt-1 text-xl font-black text-slate-900">{classCode}</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">Map View</p>
+            <h2 className="mt-1 text-xl font-black text-slate-900">안전 탐사 상태</h2>
             <p className="mt-2 text-sm text-slate-500">{summary}</p>
           </div>
           <div className="rounded-[1.4rem] bg-emerald-50 px-4 py-3 text-center">
@@ -113,7 +92,12 @@ export default function ClassMapPage() {
           mapCenter={mapCenter}
           onCenterChange={(lat, lng) => setMapCenter({ lat, lng })}
           onMarkerClick={(pinId) => router.push(`/pin/${pinId}`)}
-          onCreateClick={handleCreateClick}
+          createMode={createMode}
+          onToggleCreateMode={() => setCreateMode((prev) => !prev)}
+          onMapSelect={(lat, lng) => {
+            setCreateMode(false);
+            setDraftLocation({ lat, lng });
+          }}
         />
       )}
 

@@ -52,27 +52,57 @@ export const loadNaverMapScript = (): Promise<void> => {
 };
 
 export const getGeocode = async (address: string): Promise<{ lat: number; lng: number } | null> => {
+  const query = address.trim();
+  if (!query) return null;
+
+  // 1) 서버 API 우선 시도 (REST geocode)
+  // - 키 제한/SDK 응답 형식 변경 시에도 검색 성공률을 높입니다.
+  try {
+    const res = await fetch(`/api/geocode?query=${encodeURIComponent(query)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.coords && Number.isFinite(data.coords.lat) && Number.isFinite(data.coords.lng)) {
+        return { lat: data.coords.lat, lng: data.coords.lng };
+      }
+    }
+  } catch {
+    // 네트워크 오류 시 SDK geocode로 폴백
+  }
+
   if (!window.naver || !window.naver.maps) {
     await loadNaverMapScript();
   }
 
+  if (!window.naver?.maps?.Service?.geocode) {
+    return null;
+  }
+
   return new Promise((resolve) => {
     window.naver.maps.Service.geocode(
-      { query: address.trim() },
+      { query },
       (status: any, response: any) => {
-        if (status !== window.naver.maps.Service.Status.OK) {
+        const addresses = response?.v2?.addresses ?? response?.addresses;
+        if (!Array.isArray(addresses) || addresses.length === 0) {
           resolve(null);
           return;
         }
-        // oapi v3 응답 형식: response.v2.addresses
-        const addresses = response.v2?.addresses;
-        if (!addresses || addresses.length === 0) {
+
+        const lat = parseFloat(addresses[0].y);
+        const lng = parseFloat(addresses[0].x);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
           resolve(null);
           return;
         }
+
+        // 상태 값이 달라도 좌표가 정상 응답되면 사용합니다.
+        if (status !== window.naver.maps.Service.Status.OK && status !== "OK") {
+          resolve(null);
+          return;
+        }
+
         resolve({
-          lat: parseFloat(addresses[0].y),
-          lng: parseFloat(addresses[0].x),
+          lat,
+          lng,
         });
       }
     );
