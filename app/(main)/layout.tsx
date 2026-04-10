@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
-import { getStudentSessionId, clearStudentSession } from "@/lib/session";
+import ClassBottomNav from "@/components/explorer/ClassBottomNav";
+import { clearStudentSession, getClassCode, getStudentSessionId } from "@/lib/session";
+import { getClassRoute } from "@/lib/explorer";
 
 export default function MainLayout({
   children,
@@ -14,13 +15,22 @@ export default function MainLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [classCode, setClassCode] = useState<string | null>(null);
 
   useEffect(() => {
     const sessionId = getStudentSessionId();
+    const storedClassCode = getClassCode();
+
     if (!sessionId && !pathname?.includes("/teacher")) {
       router.push("/student/join");
     } else {
       setIsAuthenticated(true);
+      setClassCode(storedClassCode);
+
+      if (storedClassCode && (pathname === "/map" || pathname === "/create" || pathname === "/list")) {
+        const nextTab = pathname === "/create" ? "create" : pathname === "/list" ? "gallery" : "map";
+        router.replace(getClassRoute(storedClassCode, nextTab));
+      }
     }
   }, [router, pathname]);
 
@@ -44,57 +54,33 @@ export default function MainLayout({
     return <>{children}</>;
   }
 
-  const navItems = [
-    { href: "/map",     label: "안전 지도",    emoji: "🗺️" },
-    { href: "/list",    label: "발견 목록",    emoji: "📋" },
-    { href: "/check",   label: "탐험 활동",    emoji: "🔍" },
-    { href: "/my-pins", label: "내 기록",      emoji: "📌" },
-  ];
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-blue-900 shadow-lg sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4">
-          <div className="flex justify-between items-center h-14">
-            {/* Logo + title */}
-            <Link href="/map" className="flex items-center gap-2 shrink-0">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow">
-                <Image src="/logo.png" alt="SAFE" width={26} height={26} className="object-contain" />
-              </div>
-              <span className="text-white font-bold text-sm hidden sm:block tracking-tight">
-                안전 탐사 지도
-              </span>
-            </Link>
-
-            {/* Nav items */}
-            <div className="flex gap-0.5 sm:gap-1">
-              {navItems.map(({ href, label, emoji }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`flex items-center gap-1 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-                    pathname === href
-                      ? "bg-blue-600 text-white shadow-inner"
-                      : "text-blue-200 hover:bg-blue-800 hover:text-white"
-                  }`}
-                >
-                  <span className="text-sm sm:text-base">{emoji}</span>
-                  <span className="hidden xs:inline sm:inline">{label}</span>
-                </Link>
-              ))}
+    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef6ff_42%,#f8fff9_100%)]">
+      <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
+              <Image src="/logo.png" alt="SAFE" width={34} height={34} className="object-contain" />
             </div>
-
-            {/* Logout */}
-            <button
-              onClick={handleLogout}
-              className="text-blue-300 hover:text-white text-xs sm:text-sm px-2 sm:px-3 py-2 rounded-lg hover:bg-blue-800 transition-colors shrink-0"
-            >
-              나가기
-            </button>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">SAFE Explorer</p>
+              <p className="text-sm font-bold text-slate-800">
+                안전 탐사 지도 {classCode ? `· ${classCode}반` : ""}
+              </p>
+            </div>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-200"
+          >
+            나가기
+          </button>
         </div>
-      </nav>
-      <main>{children}</main>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-4 pb-32 pt-4">{children}</main>
+      {classCode && <ClassBottomNav classCode={classCode} />}
     </div>
   );
 }

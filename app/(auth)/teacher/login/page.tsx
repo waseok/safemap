@@ -60,9 +60,12 @@ export default function TeacherLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">교사 로그인</h1>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 p-4">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.18),transparent_28%),radial-gradient(circle_at_80%_18%,rgba(34,197,94,0.18),transparent_28%),linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[length:auto,auto,28px_28px,28px_28px]" />
+      <div className="relative flex min-h-screen items-center justify-center">
+      <div className="w-full max-w-md rounded-[2rem] border border-white/15 bg-white/92 p-8 shadow-[0_24px_60px_rgba(15,23,42,0.35)] backdrop-blur">
+        <h1 className="text-center text-3xl font-black text-slate-900 mb-2">교사 로그인</h1>
+        <p className="mb-6 text-center text-sm text-slate-500">SAFE 탐사 지도 운영 페이지</p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -75,7 +78,7 @@ export default function TeacherLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-3xl border border-gray-300 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -89,7 +92,7 @@ export default function TeacherLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-3xl border border-gray-300 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -100,7 +103,7 @@ export default function TeacherLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-3xl bg-gradient-to-r from-blue-600 to-emerald-500 py-4 font-bold text-white shadow-lg hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "처리 중..." : isSignUp ? "회원가입" : "로그인"}
           </button>
@@ -120,6 +123,7 @@ export default function TeacherLoginPage() {
             홈으로 돌아가기
           </a>
         </div>
+      </div>
       </div>
     </div>
   );

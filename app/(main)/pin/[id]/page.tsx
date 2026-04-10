@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import NaverMap from "@/components/Map/NaverMap";
 import EducationLinks from "@/components/EducationLinks";
 import SafetyQuiz from "@/components/SafetyQuiz";
-import { getStudentSessionId } from "@/lib/session";
+import { getClassCode, getStudentSessionId } from "@/lib/session";
 import type { SafetyPin, SafetyCategory } from "@/types";
+import { getClassRoute, getDangerMeta } from "@/lib/explorer";
 
 interface FeedbackData {
   id: string;
@@ -33,17 +34,7 @@ export default function PinDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const sessionId = getStudentSessionId();
-    if (!sessionId) {
-      router.push("/student/join");
-      return;
-    }
-    loadPin();
-    loadFeedbacks();
-  }, [pinId, router]);
-
-  const loadPin = async () => {
+  const loadPin = useCallback(async () => {
     try {
       const res = await fetch(`/api/pins/${pinId}`);
       if (!res.ok) throw new Error("핀 로드 실패");
@@ -54,9 +45,9 @@ export default function PinDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pinId]);
 
-  const loadFeedbacks = async () => {
+  const loadFeedbacks = useCallback(async () => {
     try {
       const res = await fetch(`/api/feedback?safety_pin_id=${pinId}`);
       if (!res.ok) return;
@@ -65,7 +56,17 @@ export default function PinDetailPage() {
     } catch (err) {
       console.error("피드백 로드 오류:", err);
     }
-  };
+  }, [pinId]);
+
+  useEffect(() => {
+    const sessionId = getStudentSessionId();
+    if (!sessionId) {
+      router.push("/student/join");
+      return;
+    }
+    loadPin();
+    loadFeedbacks();
+  }, [loadFeedbacks, loadPin, router]);
 
   const startEditing = () => {
     if (!pin) return;
@@ -324,19 +325,19 @@ export default function PinDetailPage() {
               {/* A. 분석 질문 답변 표시 */}
               {(pin.danger_level || pin.cause || pin.predicted_accident) && (
                 <div className="mb-4 p-4 bg-orange-50 border border-orange-100 rounded-lg space-y-2">
-                  <p className="text-sm font-semibold text-orange-700">🔍 분석 내용</p>
+                  <p className="text-sm font-semibold text-orange-700">🔍 탐사 정리</p>
                   {pin.danger_level && (
                     <div className="text-sm">
                       <span className="text-gray-600">위험도: </span>
-                      <span>{"⭐".repeat(pin.danger_level)}</span>
+                      <span>{getDangerMeta(pin.danger_level)?.emoji || "⚠️"}</span>
                       <span className="ml-1 text-gray-500">
-                        ({["", "낮음", "조금 낮음", "보통", "조금 높음", "매우 높음"][pin.danger_level]})
+                        ({getDangerMeta(pin.danger_level)?.label || `${pin.danger_level}단계`})
                       </span>
                     </div>
                   )}
                   {pin.cause && (
                     <div className="text-sm">
-                      <span className="text-gray-600 font-medium">왜 생겼을까요? </span>
+                      <span className="text-gray-600 font-medium">해결 아이디어: </span>
                       <span className="text-gray-800">{pin.cause}</span>
                     </div>
                   )}
@@ -398,6 +399,19 @@ export default function PinDetailPage() {
                   className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
                 >
                   뒤로 가기
+                </button>
+                <button
+                  onClick={() => {
+                    const classCode = getClassCode();
+                    if (classCode) {
+                      router.push(getClassRoute(classCode, "gallery"));
+                    } else {
+                      router.back();
+                    }
+                  }}
+                  className="px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200"
+                >
+                  우리반 갤러리
                 </button>
               </div>
 
