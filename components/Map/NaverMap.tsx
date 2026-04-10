@@ -25,6 +25,7 @@ interface NaverMapProps {
     lng: number;
     title?: string;
     category?: string;
+    description?: string;
     onClick?: () => void;
   }>;
   height?: string;
@@ -87,6 +88,8 @@ export default function NaverMap({
 }: NaverMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<any[]>([]);
+  const infoWindowsRef = useRef<any[]>([]);
+  const openInfoWindowRef = useRef<any>(null);
   const [map, setMap] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -164,11 +167,40 @@ export default function NaverMap({
     };
   }, [map, selectable, onMapClick]);
 
+  // 지도 클릭 시 열린 InfoWindow 닫기
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+    const listener = window.naver.maps.Event.addListener(map, "click", () => {
+      if (openInfoWindowRef.current) {
+        openInfoWindowRef.current.close();
+        openInfoWindowRef.current = null;
+      }
+    });
+    return () => {
+      window.naver.maps.Event.removeListener(listener);
+    };
+  }, [map, isLoaded]);
+
+  // 핀 상세 이동 글로벌 콜백 등록
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    (window as any).__safeMapGoto = (id: string) => {
+      const marker = markers.find((m) => m.id === id);
+      if (marker?.onClick) marker.onClick();
+    };
+    return () => {
+      delete (window as any).__safeMapGoto;
+    };
+  }, [markers]);
+
   useEffect(() => {
     if (!map || !isLoaded || typeof window === "undefined" || !window.naver?.maps) return;
 
     markersRef.current.forEach((m) => m.setMap(null));
+    infoWindowsRef.current.forEach((iw) => iw.close());
     markersRef.current = [];
+    infoWindowsRef.current = [];
+    openInfoWindowRef.current = null;
 
     const categoryColors: Record<string, string> = {
       생활안전: "#FF9800",
@@ -180,23 +212,88 @@ export default function NaverMap({
       직업안전: "#009688",
     };
 
+    const categoryIcons: Record<string, string> = {
+      생활안전: "🏠",
+      교통안전: "🚗",
+      응급처치: "🏥",
+      "폭력예방 및 신변보호": "🛡️",
+      "약물 및 사이버 중독 예방": "💊",
+      재난안전: "⚠️",
+      직업안전: "⚙️",
+    };
+
     markers.forEach((marker) => {
+      const color = categoryColors[marker.category || "생활안전"] ?? "#757575";
+      const icon = categoryIcons[marker.category || ""] || "📍";
+
       const markerInstance = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(marker.lat, marker.lng),
         map,
         title: marker.title,
+        icon: {
+          content: `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;">
+              <div style="
+                background:${color};
+                border:3px solid #fff;
+                border-radius:50% 50% 50% 0;
+                width:32px;height:32px;
+                transform:rotate(-45deg);
+                box-shadow:0 3px 8px rgba(0,0,0,.35);
+                display:flex;align-items:center;justify-content:center;
+              ">
+                <span style="transform:rotate(45deg);font-size:14px;line-height:1;">${icon}</span>
+              </div>
+            </div>`,
+          anchor: new window.naver.maps.Point(16, 34),
+        },
       });
 
-      const color = categoryColors[marker.category || "생활안전"] ?? "#757575";
-      markerInstance.setIcon({
-        content: `<div style="width:24px;height:24px;background:${color};border:2px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3);"></div>`,
-        anchor: new window.naver.maps.Point(12, 12),
+      const descHtml = marker.description
+        ? `<div style="font-size:11px;color:#374151;margin-bottom:10px;line-height:1.5;word-break:break-word;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${marker.description}</div>`
+        : "";
+
+      const infoContent = `
+        <div style="padding:12px 14px;min-width:180px;max-width:230px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;border-radius:8px;">
+          <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;">
+            <span style="font-size:24px;line-height:1.1;flex-shrink:0;">${icon}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:13px;color:#111827;word-break:break-word;line-height:1.3;">${marker.title || ""}</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:2px;">${marker.category || ""}</div>
+            </div>
+          </div>
+          ${descHtml}
+          <button
+            onclick="window.__safeMapGoto && window.__safeMapGoto('${marker.id}')"
+            style="display:block;width:100%;padding:7px 0;background:#1d4ed8;color:#fff;border:none;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600;letter-spacing:0.3px;">
+            자세히 보기 →
+          </button>
+        </div>`;
+
+      const infoWindow = new window.naver.maps.InfoWindow({
+        content: infoContent,
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        backgroundColor: "#fff",
+        disableAnchor: false,
+        pixelOffset: new window.naver.maps.Point(0, -12),
       });
 
-      if (marker.onClick) {
-        window.naver.maps.Event.addListener(markerInstance, "click", marker.onClick);
-      }
+      window.naver.maps.Event.addListener(markerInstance, "click", () => {
+        if (openInfoWindowRef.current === infoWindow) {
+          infoWindow.close();
+          openInfoWindowRef.current = null;
+        } else {
+          if (openInfoWindowRef.current) {
+            openInfoWindowRef.current.close();
+          }
+          infoWindow.open(map, markerInstance);
+          openInfoWindowRef.current = infoWindow;
+        }
+      });
+
       markersRef.current.push(markerInstance);
+      infoWindowsRef.current.push(infoWindow);
     });
   }, [map, isLoaded, markers]);
 

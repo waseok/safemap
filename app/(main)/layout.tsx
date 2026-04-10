@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getStudentSessionId, clearStudentSession } from "@/lib/session";
 
 export default function MainLayout({
@@ -16,7 +17,6 @@ export default function MainLayout({
 
   useEffect(() => {
     const sessionId = getStudentSessionId();
-    // 테스트 세션 포함해서 세션이 있으면 입장 처리
     if (!sessionId && !pathname?.includes("/teacher")) {
       router.push("/student/join");
     } else {
@@ -29,11 +29,13 @@ export default function MainLayout({
     router.push("/");
   };
 
-  // 세션 확인 중일 때 잠깐 로딩 표시 (테스트 입장 시 빈 화면 방지)
   if (!isAuthenticated && !pathname?.includes("/teacher")) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-500">입장 확인 중...</p>
+      <div className="min-h-screen flex items-center justify-center bg-blue-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-blue-600 font-medium">입장 확인 중...</p>
+        </div>
       </div>
     );
   }
@@ -42,58 +44,52 @@ export default function MainLayout({
     return <>{children}</>;
   }
 
+  const navItems = [
+    { href: "/map",     label: "안전 지도",    emoji: "🗺️" },
+    { href: "/list",    label: "발견 목록",    emoji: "📋" },
+    { href: "/check",   label: "탐험 활동",    emoji: "🔍" },
+    { href: "/my-pins", label: "내 기록",      emoji: "📌" },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href="/map"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  pathname === "/map"
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                지도 보기
-              </Link>
-              <Link
-                href="/list"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  pathname === "/list"
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                리스트 보기
-              </Link>
-              <Link
-                href="/check"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  pathname === "/check"
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                안전점검
-              </Link>
-              <Link
-                href="/my-pins"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  pathname === "/my-pins"
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                내 핀
-              </Link>
+      <nav className="bg-blue-900 shadow-lg sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4">
+          <div className="flex justify-between items-center h-14">
+            {/* Logo + title */}
+            <Link href="/map" className="flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow">
+                <Image src="/logo.svg" alt="SAFE" width={26} height={26} className="object-contain" />
+              </div>
+              <span className="text-white font-bold text-sm hidden sm:block tracking-tight">
+                안전 탐사 지도
+              </span>
+            </Link>
+
+            {/* Nav items */}
+            <div className="flex gap-0.5 sm:gap-1">
+              {navItems.map(({ href, label, emoji }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`flex items-center gap-1 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                    pathname === href
+                      ? "bg-blue-600 text-white shadow-inner"
+                      : "text-blue-200 hover:bg-blue-800 hover:text-white"
+                  }`}
+                >
+                  <span className="text-sm sm:text-base">{emoji}</span>
+                  <span className="hidden xs:inline sm:inline">{label}</span>
+                </Link>
+              ))}
             </div>
+
+            {/* Logout */}
             <button
               onClick={handleLogout}
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              className="text-blue-300 hover:text-white text-xs sm:text-sm px-2 sm:px-3 py-2 rounded-lg hover:bg-blue-800 transition-colors shrink-0"
             >
-              로그아웃
+              나가기
             </button>
           </div>
         </div>

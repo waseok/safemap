@@ -126,6 +126,7 @@ export default function MapPage() {
       lng: pin.longitude!,
       title: pin.title,
       category: pin.category,
+      description: pin.description,
       onClick: () => {
         router.push(`/pin/${pin.id}`);
       },
@@ -133,13 +134,22 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="bg-white shadow-md p-4 mb-4">
-        <h1 className="text-2xl font-bold">지도 보기</h1>
-        <p className="text-sm text-gray-600 mt-1">
-          마을에서 발견한 안전 문제를 지도에서 확인하세요
-        </p>
+      <div className="bg-blue-900 text-white p-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold flex items-center gap-2">
+            🗺️ 안전 탐사 지도
+          </h1>
+          <p className="text-blue-200 text-xs mt-0.5">
+            핀을 클릭하면 발견한 위험 내용을 확인할 수 있어요
+          </p>
+        </div>
+        <div className="text-right text-sm text-blue-200">
+          <span className="bg-blue-700 px-2 py-1 rounded-full text-xs">
+            📍 {pins.length}개 발견
+          </span>
+        </div>
       </div>
-      <div className="h-[calc(100vh-200px)] min-h-[400px] relative">
+      <div className="h-[calc(100vh-140px)] min-h-[400px] relative">
         <NaverMap
           center={mapCenter}
           markers={markers}
@@ -153,13 +163,15 @@ export default function MapPage() {
         <button
           type="button"
           onClick={() => setAddPinMode(!addPinMode)}
-          className={`absolute bottom-4 left-4 z-20 flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg shadow-md font-medium ${
-            addPinMode ? "bg-orange-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"
+          className={`absolute bottom-4 left-4 z-20 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg font-semibold text-sm transition-all ${
+            addPinMode
+              ? "bg-orange-500 text-white ring-2 ring-orange-300"
+              : "bg-blue-900 text-white hover:bg-blue-800"
           }`}
         >
-          <span className="text-lg">📍</span>
-          <span className="text-sm">
-            {addPinMode ? "지도를 클릭하여 핀을 꽂으세요" : "안전점검 핀"}
+          <span className="text-base">📍</span>
+          <span>
+            {addPinMode ? "위치를 클릭해서 위험을 기록하세요!" : "위험 발견 기록하기"}
           </span>
         </button>
       </div>
