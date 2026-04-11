@@ -36,8 +36,8 @@ export default function ClassGalleryPage() {
       <section className="rounded-[2rem] border border-emerald-100 bg-white p-5 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-600">우리반 갤러리</p>
-            <h1 className="mt-2 text-2xl font-black text-slate-900">친구들이 찾은 위험 요소</h1>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-600">안전 탐사 기록</p>
+            <h1 className="mt-2 text-2xl font-black text-slate-900">친구들이 남긴 안전 탐사 내용</h1>
             <p className="mt-2 text-sm leading-6 text-slate-500">
               사진, 위험도, 해결 아이디어를 한눈에 모아 보며 우리 동네를 더 안전하게 바꿔 보세요.
             </p>

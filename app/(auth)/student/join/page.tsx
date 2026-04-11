@@ -94,9 +94,9 @@ export default function StudentJoinPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#edf6ff] px-4 py-8">
+    <div className="relative min-h-dvh overflow-hidden bg-[#edf6ff] px-4 py-8">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.08)_1px,transparent_1px)] bg-[size:26px_26px]" />
-      <div className="relative mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md items-center justify-center">
+      <div className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-md items-center justify-center">
         <div className="w-full rounded-[2rem] border border-blue-100 bg-white p-7 shadow-sm">
           <div className="mb-6">
             <h1 className="text-3xl font-black text-slate-900">학급 입장</h1>

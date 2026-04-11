@@ -3,10 +3,10 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#edf6ff] px-6 py-10">
+    <div className="relative min-h-dvh overflow-hidden bg-[#edf6ff] px-6 py-10">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.08)_1px,transparent_1px)] bg-[size:26px_26px]" />
 
-      <div className="relative mx-auto flex min-h-[calc(100vh-5rem)] max-w-xl flex-col items-center justify-center rounded-[2rem] border border-blue-100 bg-white px-7 py-10 text-center shadow-sm">
+      <div className="relative mx-auto flex min-h-[calc(100dvh-5rem)] max-w-xl flex-col items-center justify-center rounded-[2rem] border border-blue-100 bg-white px-7 py-10 text-center shadow-sm">
         <div className="flex h-36 w-36 items-center justify-center rounded-full bg-[#f5faff]">
           <Image
             src="/logo.png"

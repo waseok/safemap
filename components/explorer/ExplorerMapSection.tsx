@@ -46,7 +46,7 @@ export default function ExplorerMapSection({
             </span>
             <h1 className="mt-3 text-2xl font-black text-slate-900">우리 동네 안전 탐사 지도</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              친구들이 남긴 위험 핀을 보며, 지금 서 있는 자리도 바로 기록해 보세요.
+              친구들이 남긴 안전 탐사 내용을 보며, 위험한 곳을 바로 기록해 보세요.
             </p>
           </div>
           <div className="rounded-[1.5rem] bg-blue-50 px-4 py-3 text-right">
@@ -70,7 +70,7 @@ export default function ExplorerMapSection({
       </div>
 
       <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-        <div className="relative h-[calc(100vh-19rem)] min-h-[420px]">
+        <div className="relative h-[58dvh] min-h-[360px] max-h-[560px]">
           <NaverMap
             center={mapCenter}
             markers={markers}
@@ -82,9 +82,26 @@ export default function ExplorerMapSection({
             onMapClick={createMode ? onMapSelect : undefined}
           />
           {createMode && (
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-2">
+                <div className="relative">
+                  <div className="absolute inset-0 animate-ping rounded-full bg-red-400/60" />
+                  <div className="relative h-11 w-11 rounded-full bg-white p-1 shadow-md">
+                    <div className="flex h-full w-full items-center justify-center rounded-full bg-red-500 text-2xl text-white">
+                      📍
+                    </div>
+                  </div>
+                </div>
+                <p className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-red-600 shadow-sm">
+                  여기를 눌러 기록 시작
+                </p>
+              </div>
+            </div>
+          )}
+          {createMode && (
             <div className="absolute inset-x-0 top-4 z-10 px-4">
               <div className="mx-auto max-w-sm rounded-2xl border border-blue-200 bg-white/95 px-4 py-3 text-center text-sm font-semibold text-blue-700 shadow-sm">
-                핀 모양 커서로 바뀌었어요. 지도에서 위치를 한 번 눌러주세요.
+                지도에서 위치를 한 번 누르면 그 위치로 안전 탐사 기록을 시작합니다.
               </div>
             </div>
           )}
@@ -99,7 +116,7 @@ export default function ExplorerMapSection({
               }`}
             >
               <span className="text-xl">{createMode ? "✅" : "📍"}</span>
-              {createMode ? "선택 모드 종료" : "안전 탐사 기록 시작하기"}
+              {createMode ? "탐사 위치 선택 종료" : "안전 탐사 기록 시작하기"}
             </button>
           </div>
         </div>

@@ -88,6 +88,8 @@ export default function NaverMap({
   showSearchButton = false,
   showZoomControl = true,
 }: NaverMapProps) {
+  const initialCenterRef = useRef(center);
+  const initialZoomRef = useRef(zoom);
   const mapRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<any[]>([]);
   const infoWindowsRef = useRef<any[]>([]);
@@ -118,8 +120,8 @@ export default function NaverMap({
         }
 
         const mapInstance = new window.naver.maps.Map(mapRef.current, {
-          center: new window.naver.maps.LatLng(center.lat, center.lng),
-          zoom,
+          center: new window.naver.maps.LatLng(initialCenterRef.current.lat, initialCenterRef.current.lng),
+          zoom: initialZoomRef.current,
         });
         if (cancelled) return;
 
@@ -137,7 +139,7 @@ export default function NaverMap({
     return () => {
       cancelled = true;
     };
-  }, [center.lat, center.lng, showZoomControl, zoom]);
+  }, []);
 
   useEffect(() => {
     if (!map || !center || typeof window === "undefined" || !window.naver?.maps) return;
@@ -206,7 +208,7 @@ export default function NaverMap({
 
     markers.forEach((marker) => {
       const categoryUi = getExplorerCategoryByDb(marker.category);
-      const color = categoryUi.accentColor;
+      const color = "#ef4444";
       const icon = categoryUi.mapIcon;
 
       const markerInstance = new window.naver.maps.Marker({
@@ -243,6 +245,7 @@ export default function NaverMap({
             <div style="flex:1;min-width:0;">
               <div style="font-weight:700;font-size:13px;color:#111827;word-break:break-word;line-height:1.3;">${marker.title || ""}</div>
               <div style="font-size:11px;color:#6b7280;margin-top:2px;">${categoryUi.label}${marker.studentName ? ` · ${marker.studentName}` : ""}</div>
+              <div style="font-size:11px;color:#374151;margin-top:2px;">안전영역: ${marker.category || categoryUi.areaName}</div>
             </div>
           </div>
           ${descHtml}

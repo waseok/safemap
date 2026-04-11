@@ -17,6 +17,7 @@ export default function ClassMapPage() {
   const classCode = String(params?.code || SAFE_CLASS_CODE);
   const { pins, loading, error, reload } = useClassPins({ locationType: "마을" });
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+  const [isCenterInitialized, setIsCenterInitialized] = useState(false);
   const [createMode, setCreateMode] = useState(false);
   const [draftLocation, setDraftLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [celebration, setCelebration] = useState("");
@@ -36,10 +37,11 @@ export default function ClassMapPage() {
   }, [classCode, router]);
 
   useEffect(() => {
-    if (pins.length > 0 && pins[0].latitude && pins[0].longitude) {
+    if (!isCenterInitialized && pins.length > 0 && pins[0].latitude && pins[0].longitude) {
       setMapCenter({ lat: pins[0].latitude, lng: pins[0].longitude });
+      setIsCenterInitialized(true);
     }
-  }, [pins]);
+  }, [isCenterInitialized, pins]);
 
   useEffect(() => {
     const timer = celebration
@@ -71,7 +73,7 @@ export default function ClassMapPage() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">Map View</p>
-            <h2 className="mt-1 text-xl font-black text-slate-900">안전 탐사 상태</h2>
+            <h2 className="mt-1 text-xl font-black text-slate-900">우리반 안전 탐사 상태</h2>
             <p className="mt-2 text-sm text-slate-500">{summary}</p>
           </div>
           <div className="rounded-[1.4rem] bg-emerald-50 px-4 py-3 text-center">
