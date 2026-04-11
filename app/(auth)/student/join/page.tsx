@@ -97,7 +97,7 @@ export default function StudentJoinPage() {
       <div className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-md items-center justify-center">
         <div className="w-full rounded-[2rem] border border-blue-100 bg-white p-7 shadow-sm">
           <div className="mb-6">
-            <h1 className="text-3xl font-black text-slate-900">학급 입장</h1>
+            <h1 className="text-3xl font-bold text-slate-900">학급 입장</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600">선생님이 알려준 학급 코드와 이름을 입력해 주세요.</p>
           </div>
 
@@ -117,7 +117,7 @@ export default function StudentJoinPage() {
                 }}
                 required
                 maxLength={4}
-                className="w-full rounded-3xl border border-slate-200 px-4 py-4 text-center text-3xl font-black tracking-[0.5em] text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-3xl border border-slate-200 px-4 py-4 text-center text-3xl font-bold tracking-[0.5em] text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0000"
               />
             </div>

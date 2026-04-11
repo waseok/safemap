@@ -18,7 +18,7 @@ export default function Home() {
           />
         </div>
 
-        <h1 className="mt-8 text-4xl tracking-tight text-slate-900 md:text-5xl">
+        <h1 className="mt-8 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
           안전 탐사 지도
         </h1>
         <p className="mt-4 text-lg leading-8 text-slate-500 md:text-xl">

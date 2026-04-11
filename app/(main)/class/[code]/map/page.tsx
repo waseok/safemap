@@ -72,13 +72,13 @@ export default function ClassMapPage() {
       <div className="rounded-[1.8rem] border border-blue-100 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">Map View</p>
-            <h2 className="mt-1 text-xl font-black text-slate-900">우리반 안전 탐사 상태</h2>
+            <p className="text-sm tracking-[0.2em] text-blue-600">Map View</p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900">우리반 안전 탐사 상태</h2>
             <p className="mt-2 text-sm text-slate-500">{summary}</p>
           </div>
           <div className="rounded-[1.4rem] bg-emerald-50 px-4 py-3 text-center">
             <p className="text-xs font-bold text-emerald-700">탐사 상태</p>
-            <p className="mt-1 text-lg font-black text-emerald-600">실시간 공유</p>
+            <p className="mt-1 text-lg font-bold text-emerald-600">실시간 공유</p>
           </div>
         </div>
       </div>
