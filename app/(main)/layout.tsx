@@ -44,7 +44,7 @@ export default function MainLayout({
       <div className="min-h-screen flex items-center justify-center bg-blue-50">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-blue-600 font-medium">입장 확인 중...</p>
+          <p className="text-blue-600 text-base">입장 확인 중...</p>
         </div>
       </div>
     );
@@ -59,18 +59,18 @@ export default function MainLayout({
       <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
-              <Image src="/logo.png" alt="SAFE" width={34} height={34} className="object-contain" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
+              <Image src="/logo.png" alt="SAFE" width={38} height={38} className="object-contain" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">SAFE Explorer</p>
-              <p className="text-sm font-bold text-slate-800">안전 탐사 지도</p>
+              <p className="text-sm tracking-[0.2em] text-blue-600">SAFE Explorer</p>
+              <p className="text-base text-slate-800">안전 탐사 지도</p>
             </div>
           </div>
 
           <button
             onClick={handleLogout}
-            className="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-200"
+            className="rounded-full bg-slate-100 px-5 py-2.5 text-base text-slate-600 transition hover:bg-slate-200"
           >
             나가기
           </button>

@@ -80,9 +80,9 @@ export default function ClassCreatePage() {
   return (
     <div className="space-y-4">
       <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm">
-        <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">안전 탐사 기록</p>
-        <h1 className="mt-2 text-2xl font-black text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
-        <p className="mt-2 text-base leading-7 text-slate-600">
+        <p className="text-sm tracking-[0.2em] text-blue-600">안전 탐사 기록</p>
+        <h1 className="mt-2 text-2xl text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
+        <p className="mt-2 text-base leading-7 text-slate-500">
           GPS로 현재 위치를 가져와 자동으로 핀을 준비했어요. 사진과 해결 아이디어만 채우면 끝이에요.
         </p>
       </section>
@@ -90,15 +90,15 @@ export default function ClassCreatePage() {
       <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-bold text-slate-800">현재 위치 미리보기</p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="text-base text-slate-800">현재 위치 미리보기</p>
+            <p className="mt-1 text-sm text-slate-500">
               GPS가 잡히지 않으면 서울 시청 기준 위치가 보일 수 있어요.
             </p>
           </div>
           <button
             type="button"
             onClick={locateCurrentPosition}
-            className="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
+            className="rounded-full bg-slate-100 px-4 py-2 text-base text-slate-700 transition hover:bg-slate-200"
           >
             다시 찾기
           </button>
@@ -123,7 +123,7 @@ export default function ClassCreatePage() {
                   </div>
                 </div>
               </div>
-              <p className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-red-600 shadow-sm">
+              <p className="rounded-full bg-white/90 px-3 py-1 text-sm text-red-600 shadow-sm">
                 이 위치에 기록됩니다
               </p>
             </div>
@@ -140,9 +140,9 @@ export default function ClassCreatePage() {
         <button
           type="button"
           onClick={() => setShowWizard(true)}
-          className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-blue-500 px-6 py-5 text-lg font-black text-white hover:bg-blue-600"
+          className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-blue-500 px-6 py-5 text-xl text-white hover:bg-blue-600"
         >
-          <span className="text-xl">📝</span>
+          <span className="text-2xl">📝</span>
           이 위치로 안전 탐사 기록 시작
         </button>
       </section>

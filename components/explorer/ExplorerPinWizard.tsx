@@ -174,22 +174,22 @@ export default function ExplorerPinWizard({
       <div className="flex h-full items-end justify-center p-0 sm:items-center sm:p-6">
         <div className="animate-sheet-up flex w-full max-w-lg flex-col rounded-t-[2rem] bg-white shadow-2xl sm:rounded-[2rem]" style={{ maxHeight: "92dvh" }}>
           <div className="flex-shrink-0 px-5 pt-5">
-            <div className="mb-5 flex items-start justify-between gap-4">
+            <div className="mb-4 flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-blue-600">탐사 기록</p>
-                <h2 className="mt-2 text-2xl font-black text-slate-900">{STEP_TITLES[step]}</h2>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="whitespace-nowrap text-sm text-slate-400">
-                  {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
-                </span>
-                <input
-                  type="text"
-                  value={locationName}
-                  onChange={(event) => setLocationName(event.target.value)}
-                  placeholder="위치 이름 입력 (예: 학교 앞 횡단보도)"
-                  className="min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                />
-              </div>
+                <p className="text-sm tracking-[0.2em] text-blue-600">탐사 기록</p>
+                <h2 className="mt-2 text-2xl text-slate-900">{STEP_TITLES[step]}</h2>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="whitespace-nowrap text-sm text-slate-400">
+                    {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
+                  </span>
+                  <input
+                    type="text"
+                    value={locationName}
+                    onChange={(event) => setLocationName(event.target.value)}
+                    placeholder="위치 이름 (예: 학교 앞)"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-base text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
               </div>
               <button
                 type="button"
@@ -201,7 +201,7 @@ export default function ExplorerPinWizard({
               </button>
             </div>
 
-            <div className="mb-5 flex gap-2">
+            <div className="mb-4 flex gap-2">
               {STEP_TITLES.map((item, index) => (
                 <div key={item} className="flex-1">
                   <div
@@ -214,7 +214,7 @@ export default function ExplorerPinWizard({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5">{/* scrollable content start */}
+          <div className="flex-1 overflow-y-auto px-5 pb-2">
 
           {step === 0 && (
             <div className="space-y-4">
@@ -233,7 +233,7 @@ export default function ExplorerPinWizard({
                         setImageFile(null);
                         setImagePreview(null);
                       }}
-                      className="w-full rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 font-semibold text-rose-600"
+                      className="w-full rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-base text-rose-600"
                     >
                       사진 다시 고르기
                     </button>
@@ -241,8 +241,8 @@ export default function ExplorerPinWizard({
                 ) : (
                   <div className="flex min-h-56 flex-col items-center justify-center rounded-[1.5rem] bg-white text-center">
                     <span className="text-5xl">📸</span>
-                    <p className="mt-3 text-lg font-bold text-slate-800">현장 사진을 올리면 더 좋아요</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                    <p className="mt-3 text-xl text-slate-800">현장 사진을 올리면 더 좋아요</p>
+                    <p className="mt-2 text-base leading-7 text-slate-500">
                       사진 없이 건너뛰고 다음 단계로 바로 넘어갈 수도 있어요.
                     </p>
                   </div>
@@ -268,14 +268,14 @@ export default function ExplorerPinWizard({
                 <button
                   type="button"
                   onClick={() => cameraInputRef.current?.click()}
-                  className="rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white"
+                  className="rounded-[1.4rem] bg-blue-500 px-4 py-4 text-lg text-white"
                 >
                   카메라로 찍기
                 </button>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-[1.4rem] bg-[#e7f1ff] px-4 py-4 font-bold text-blue-700"
+                  className="rounded-[1.4rem] bg-[#e7f1ff] px-4 py-4 text-lg text-blue-700"
                 >
                   앨범에서 고르기
                 </button>
@@ -284,7 +284,7 @@ export default function ExplorerPinWizard({
                 <button
                   type="button"
                   onClick={goNext}
-                  className="w-full rounded-[1.4rem] border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600"
+                  className="w-full rounded-[1.4rem] border border-slate-200 bg-white px-4 py-3 text-base text-slate-600"
                 >
                   사진 건너뛰고 다음 단계로
                 </button>
@@ -308,21 +308,21 @@ export default function ExplorerPinWizard({
                         : "border-slate-200 bg-white"
                     }`}
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-center gap-4">
                       <div
-                        className="flex h-14 w-14 items-center justify-center rounded-[1.2rem] text-2xl text-white"
+                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.2rem] text-2xl text-white"
                         style={{ backgroundColor: area.accentColor }}
                       >
                         {area.mapIcon}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-base font-black text-slate-900">{areaName}</span>
-                          <span className={`rounded-full px-2 py-1 text-xs font-bold ${area.surfaceClassName} ${area.textClassName}`}>
+                          <span className="text-lg text-slate-900">{areaName}</span>
+                          <span className={`rounded-full px-2 py-0.5 text-sm ${area.surfaceClassName} ${area.textClassName}`}>
                             {area.badgeIcon}
                           </span>
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                        <p className="mt-1 text-base leading-6 text-slate-500">
                           {SAFETY_AREA_HELP_TEXT[areaName]}
                         </p>
                       </div>
@@ -336,7 +336,7 @@ export default function ExplorerPinWizard({
           {step === 2 && (
             <div className="space-y-4">
               <div className={`rounded-[1.75rem] border p-4 ${selectedCategory.surfaceClassName} ${selectedCategory.borderClassName}`}>
-                <p className="text-sm font-semibold text-slate-700">선택한 위험 종류</p>
+                <p className="text-base text-slate-700">선택한 위험 종류</p>
                 <div className="mt-3 flex items-center gap-3">
                   <div
                     className="flex h-14 w-14 items-center justify-center rounded-[1.2rem] text-2xl text-white"
@@ -345,8 +345,8 @@ export default function ExplorerPinWizard({
                     {selectedCategory.mapIcon}
                   </div>
                   <div>
-                    <p className="text-lg font-black text-slate-900">{selectedSafetyArea}</p>
-                    <p className="text-sm text-slate-500">{SAFETY_AREA_HELP_TEXT[selectedSafetyArea]}</p>
+                    <p className="text-xl text-slate-900">{selectedSafetyArea}</p>
+                    <p className="text-base text-slate-500">{SAFETY_AREA_HELP_TEXT[selectedSafetyArea]}</p>
                   </div>
                 </div>
               </div>
@@ -365,12 +365,12 @@ export default function ExplorerPinWizard({
                       }`}
                     >
                       <div className="text-3xl">{item.emoji}</div>
-                      <div className="mt-2 text-xs font-bold text-slate-700">{item.value}단계</div>
+                      <div className="mt-2 text-sm text-slate-700">{item.value}단계</div>
                     </button>
                   );
                 })}
               </div>
-              <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600">
+              <p className="rounded-2xl bg-slate-50 px-4 py-3 text-base text-slate-600">
                 {DANGER_LEVELS.find((item) => item.value === dangerLevel)?.label}
               </p>
             </div>
@@ -379,7 +379,7 @@ export default function ExplorerPinWizard({
           {step === 3 && (
             <div className="space-y-5">
               <div>
-                <label className="mb-2 block text-base font-bold text-slate-700">한 줄 제목</label>
+                <label className="mb-2 block text-lg text-slate-700">한 줄 제목</label>
                 <input
                   type="text"
                   value={title}
@@ -389,30 +389,30 @@ export default function ExplorerPinWizard({
                 />
               </div>
               <div>
-                <label className="mb-2 block text-base font-bold text-slate-700">무엇을 발견했나요?</label>
+                <label className="mb-2 block text-lg text-slate-700">무엇을 발견했나요?</label>
                 <textarea
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
                   rows={3}
                   placeholder="친구들이 읽고 바로 이해할 수 있게 자세히 적어주세요."
-                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-7 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-base font-bold text-slate-700">해결 방법을 제안해 볼까요?</label>
+                <label className="mb-2 block text-lg text-slate-700">해결 방법을 제안해 볼까요?</label>
                 <textarea
                   value={proposal}
                   onChange={(event) => setProposal(event.target.value)}
                   rows={3}
                   placeholder="예: 안내 표지판을 더 크게 만들고, 선생님이나 구청에 알려서 빨리 고치면 좋아요."
-                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-7 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-base font-bold text-slate-700">
+                <label className="mb-2 block text-lg text-slate-700">
                   🔍 탐구적 질문 만들기
                 </label>
-                <p className="mb-3 text-sm leading-6 text-slate-500">
+                <p className="mb-3 text-base leading-7 text-slate-500">
                   이 위험에 대해 더 알아보고 싶은 것을 질문으로 만들어 보세요.
                 </p>
                 <textarea
@@ -420,25 +420,25 @@ export default function ExplorerPinWizard({
                   onChange={(event) => setQuestion(event.target.value)}
                   rows={2}
                   placeholder="예: 이 횡단보도에서 사고가 자주 나는 이유는 무엇일까?"
-                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-7 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
           )}
 
           {error && (
-            <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">
+            <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-base text-rose-600">
               {error}
             </div>
           )}
-          </div>{/* scrollable content end */}
+          </div>
 
           <div className="flex-shrink-0 border-t border-slate-100 px-5 pb-5 pt-4">
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={step === 0 ? onClose : goPrev}
-                className="flex-1 rounded-[1.4rem] bg-slate-100 px-4 py-4 font-bold text-slate-700"
+                className="flex-1 rounded-[1.4rem] bg-slate-100 px-4 py-4 text-lg text-slate-700"
               >
                 {step === 0 ? "닫기" : "이전"}
               </button>
@@ -446,7 +446,7 @@ export default function ExplorerPinWizard({
                 <button
                   type="button"
                   onClick={goNext}
-                  className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white"
+                  className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 text-lg text-white"
                 >
                   다음
                 </button>
@@ -455,7 +455,7 @@ export default function ExplorerPinWizard({
                   type="button"
                   disabled={loading}
                   onClick={handleSubmit}
-                  className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white disabled:opacity-50"
+                  className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 text-lg text-white disabled:opacity-50"
                 >
                   {loading ? "저장 중..." : "탐사 기록 완료"}
                 </button>
