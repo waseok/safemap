@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createClientComponentClient } from "@/lib/supabase/client";
 
 export default function TeacherLoginPage() {
@@ -60,9 +61,17 @@ export default function TeacherLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">교사 로그인</h1>
+    <div className="relative min-h-dvh overflow-hidden bg-[#edf6ff] p-4">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.08)_1px,transparent_1px)] bg-[size:26px_26px]" />
+      <div className="relative flex min-h-dvh items-center justify-center">
+      <div className="w-full max-w-md rounded-[2rem] border border-blue-100 bg-white p-8 shadow-sm">
+        <div className="mb-4 flex justify-center">
+          <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[#f2f8ff]">
+            <Image src="/logo.png" alt="SAFE 로고" width={112} height={112} className="object-contain" />
+          </div>
+        </div>
+        <h1 className="text-center text-3xl font-black text-slate-900 mb-2">교사 로그인</h1>
+        <p className="mb-6 text-center text-sm text-slate-500">SAFE 탐사 지도 운영 페이지</p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -75,7 +84,7 @@ export default function TeacherLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-3xl border border-gray-300 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -89,7 +98,7 @@ export default function TeacherLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-3xl border border-gray-300 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -100,7 +109,7 @@ export default function TeacherLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-3xl bg-blue-500 py-4 font-bold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "처리 중..." : isSignUp ? "회원가입" : "로그인"}
           </button>
@@ -120,6 +129,7 @@ export default function TeacherLoginPage() {
             홈으로 돌아가기
           </a>
         </div>
+      </div>
       </div>
     </div>
   );

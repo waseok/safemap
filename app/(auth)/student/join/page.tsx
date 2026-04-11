@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { clearStudentSession } from "@/lib/session";
+import { clearStudentSession, setStudentSession } from "@/lib/session";
+import { getClassRoute } from "@/lib/explorer";
 
 export default function StudentJoinPage() {
   const [step, setStep] = useState<"pin" | "name">("pin");
@@ -11,11 +12,11 @@ export default function StudentJoinPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [classId, setClassId] = useState<string | null>(null);
+  const [classCode, setClassCode] = useState<string>("");
+  const [className, setClassName] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    // 테스트/이전 세션이 남아 있으면 잘못된 student_id/class_id로 핀 생성이 실패할 수 있어
-    // 입장 화면 진입 시 한 번 초기화합니다.
     clearStudentSession();
   }, []);
 
@@ -41,6 +42,8 @@ export default function StudentJoinPage() {
       }
 
       setClassId(data.classId);
+      setClassCode(data.classCode);
+      setClassName(data.className);
       setStep("name");
     } catch (err: any) {
       setError(err.message || "PIN 확인에 실패했습니다.");
@@ -63,6 +66,7 @@ export default function StudentJoinPage() {
         body: JSON.stringify({
           step: "name",
           classId,
+          classCode,
           name: name.trim(),
         }),
       });
@@ -71,12 +75,15 @@ export default function StudentJoinPage() {
         throw new Error(data.error || "입장에 실패했습니다.");
       }
 
-      // 세션 ID를 localStorage에 저장
-      localStorage.setItem("student_session_id", data.sessionId);
-      localStorage.setItem("student_id", data.studentId);
-      localStorage.setItem("class_id", data.classId);
+      setStudentSession({
+        sessionId: data.sessionId,
+        studentId: data.studentId,
+        classId: data.classId,
+        classCode: data.classCode,
+        studentName: name.trim(),
+      });
 
-      router.push("/map");
+      router.push(getClassRoute(data.classCode, "map"));
     } catch (err: any) {
       setError(err.message || "입장에 실패했습니다.");
     } finally {
@@ -85,13 +92,14 @@ export default function StudentJoinPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-600 to-blue-400 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
-        <div className="text-center mb-6">
-          <div className="text-4xl mb-2">🎒</div>
-          <h1 className="text-2xl font-extrabold text-blue-700">학급 입장</h1>
-          <p className="text-sm text-blue-400 mt-1">선생님께 받은 PIN 번호를 입력하세요</p>
-        </div>
+    <div className="relative min-h-dvh overflow-hidden bg-[#edf6ff] px-4 py-8">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.08)_1px,transparent_1px)] bg-[size:26px_26px]" />
+      <div className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-md items-center justify-center">
+        <div className="w-full rounded-[2rem] border border-blue-100 bg-white p-7 shadow-sm">
+          <div className="mb-6">
+            <h1 className="text-3xl font-black text-slate-900">학급 입장</h1>
+            <p className="mt-2 text-sm leading-6 text-slate-600">선생님이 알려준 학급 코드와 이름을 입력해 주세요.</p>
+          </div>
 
         {step === "pin" ? (
           <form onSubmit={handlePinSubmit} className="space-y-5">
@@ -109,7 +117,7 @@ export default function StudentJoinPage() {
                 }}
                 required
                 maxLength={4}
-                className="w-full px-4 py-4 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-3xl font-mono tracking-[0.5em] text-blue-800"
+                className="w-full rounded-3xl border border-slate-200 px-4 py-4 text-center text-3xl font-black tracking-[0.5em] text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0000"
               />
             </div>
@@ -121,13 +129,14 @@ export default function StudentJoinPage() {
             <button
               type="submit"
               disabled={loading || pin.length !== 4}
-              className="w-full bg-blue-500 hover:bg-blue-400 text-white py-4 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
+              className="w-full rounded-3xl bg-blue-500 py-4 text-base font-bold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "확인 중..." : "다음 →"}
             </button>
           </form>
         ) : (
-          <form onSubmit={handleNameSubmit} className="space-y-5">
+          <form onSubmit={handleNameSubmit} className="space-y-4">
+            {className && <p className="rounded-3xl bg-blue-50 px-4 py-3 text-sm text-blue-700">{className}</p>}
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-gray-600 mb-2">
                 이름
@@ -138,7 +147,7 @@ export default function StudentJoinPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-4 py-4 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-blue-800"
+                className="w-full rounded-3xl border border-slate-200 px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="이름을 입력하세요"
               />
             </div>
@@ -155,14 +164,14 @@ export default function StudentJoinPage() {
                   setName("");
                   setError("");
                 }}
-                className="flex-1 bg-gray-100 text-gray-600 py-4 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                className="flex-1 rounded-3xl bg-slate-100 py-4 font-semibold text-slate-700 transition hover:bg-slate-200"
               >
                 ← 이전
               </button>
               <button
                 type="submit"
                 disabled={loading || !name.trim()}
-                className="flex-2 flex-grow bg-blue-500 hover:bg-blue-400 text-white py-4 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
+                className="flex-1 rounded-3xl bg-blue-500 py-4 font-bold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "입장 중..." : "입장하기 🚀"}
               </button>
@@ -175,6 +184,7 @@ export default function StudentJoinPage() {
             ← 홈으로 돌아가기
           </a>
         </div>
+      </div>
       </div>
     </div>
   );

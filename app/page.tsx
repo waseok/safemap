@@ -3,61 +3,48 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-950 via-blue-800 to-blue-600 flex flex-col items-center justify-center p-8 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-10 left-10 text-5xl opacity-10 select-none rotate-12">🗺️</div>
-      <div className="absolute top-20 right-12 text-4xl opacity-10 select-none -rotate-6">📍</div>
-      <div className="absolute bottom-16 left-16 text-4xl opacity-10 select-none rotate-6">🧭</div>
-      <div className="absolute bottom-20 right-10 text-5xl opacity-10 select-none -rotate-12">🔍</div>
+    <div className="relative min-h-dvh overflow-hidden bg-[#edf6ff] px-6 py-10">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.08)_1px,transparent_1px)] bg-[size:26px_26px]" />
 
-      {/* Logo */}
-      <div className="mb-8 relative">
-        <div className="w-56 h-56 md:w-64 md:h-64 bg-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-blue-300/40">
+      <div className="relative mx-auto flex min-h-[calc(100dvh-5rem)] max-w-xl flex-col items-center justify-center rounded-[2rem] border border-blue-100 bg-white px-7 py-10 text-center shadow-sm">
+        <div className="flex h-36 w-36 items-center justify-center rounded-full bg-[#f5faff]">
           <Image
             src="/logo.png"
             alt="SAFE 프로젝트 로고"
-            width={210}
-            height={210}
-            className="object-contain p-2"
+            width={118}
+            height={118}
+            className="object-contain"
             priority
           />
         </div>
+
+        <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 md:text-5xl">
+          안전 탐사 지도
+        </h1>
+        <p className="mt-3 text-base leading-7 text-slate-600 md:text-lg">
+          우리 동네 위험 요소를 찾아 기록하고
+          <br />
+          함께 해결 방법을 제안해요.
+        </p>
+
+        <div className="mt-10 w-full space-y-3">
+          <Link
+            href="/student/join"
+            className="flex w-full items-center justify-center gap-3 rounded-[1.5rem] bg-blue-500 px-6 py-4 text-base font-black text-white transition hover:bg-blue-600"
+          >
+            <span className="text-xl">🎒</span>
+            학급 입장
+          </Link>
+
+          <Link
+            href="/teacher/login"
+            className="flex w-full items-center justify-center gap-3 rounded-[1.5rem] bg-[#e7f1ff] px-6 py-4 text-base font-bold text-blue-700 transition hover:bg-[#d8e8ff]"
+          >
+            <span className="text-xl">👩‍🏫</span>
+            교사 로그인
+          </Link>
+        </div>
       </div>
-
-      {/* Title */}
-      <h1 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-3 drop-shadow-lg tracking-tight">
-        안전 탐사 웹페이지
-      </h1>
-
-      {/* Subtitle */}
-      <p className="text-blue-200 text-base md:text-lg text-center mb-10 max-w-sm leading-relaxed">
-        우리 동네 안전 위험을 직접 발견하고<br />
-        함께 기록하는 안전 탐험가가 되어요!
-      </p>
-
-      {/* Entry buttons */}
-      <div className="w-full max-w-xs space-y-4">
-        <Link
-          href="/teacher/dashboard"
-          className="flex items-center justify-center gap-3 w-full py-5 px-6 bg-white text-blue-900 rounded-2xl text-xl font-extrabold shadow-xl hover:bg-blue-50 transition-all duration-200 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
-        >
-          <span className="text-2xl">👩‍🏫</span>
-          교사 입장
-        </Link>
-
-        <Link
-          href="/student/join"
-          className="flex items-center justify-center gap-3 w-full py-5 px-6 bg-green-500 text-white rounded-2xl text-xl font-extrabold shadow-xl hover:bg-green-400 transition-all duration-200 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
-        >
-          <span className="text-2xl">🎒</span>
-          학급 입장
-        </Link>
-      </div>
-
-      {/* Footer */}
-      <p className="mt-12 text-white/80 text-sm font-semibold text-center tracking-wide">
-        SAFE 프로젝트 · 안전문해력 향상 프로그램
-      </p>
     </div>
   );
 }

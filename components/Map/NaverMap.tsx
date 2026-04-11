@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { loadNaverMapScript, getGeocode as fetchGeocode } from "@/lib/naver-map";
+import { getExplorerCategoryByDb } from "@/lib/explorer";
 
 const STORAGE_RECENT_KEY = "safety-map-recent-search";
 const STORAGE_FAVORITES_KEY = "safety-map-favorites";
@@ -26,6 +27,7 @@ interface NaverMapProps {
     title?: string;
     category?: string;
     description?: string;
+    studentName?: string;
     onClick?: () => void;
   }>;
   height?: string;
@@ -86,6 +88,8 @@ export default function NaverMap({
   showSearchButton = false,
   showZoomControl = true,
 }: NaverMapProps) {
+  const initialCenterRef = useRef(center);
+  const initialZoomRef = useRef(zoom);
   const mapRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<any[]>([]);
   const infoWindowsRef = useRef<any[]>([]);
@@ -116,8 +120,8 @@ export default function NaverMap({
         }
 
         const mapInstance = new window.naver.maps.Map(mapRef.current, {
-          center: new window.naver.maps.LatLng(center.lat, center.lng),
-          zoom,
+          center: new window.naver.maps.LatLng(initialCenterRef.current.lat, initialCenterRef.current.lng),
+          zoom: initialZoomRef.current,
         });
         if (cancelled) return;
 
@@ -135,7 +139,7 @@ export default function NaverMap({
     return () => {
       cancelled = true;
     };
-  }, [center.lat, center.lng, showZoomControl, zoom]);
+  }, []);
 
   useEffect(() => {
     if (!map || !center || typeof window === "undefined" || !window.naver?.maps) return;
@@ -202,29 +206,10 @@ export default function NaverMap({
     infoWindowsRef.current = [];
     openInfoWindowRef.current = null;
 
-    const categoryColors: Record<string, string> = {
-      생활안전: "#FF9800",
-      교통안전: "#E53935",
-      응급처치: "#E91E63",
-      "폭력예방 및 신변보호": "#9C27B0",
-      "약물 및 사이버 중독 예방": "#673AB7",
-      재난안전: "#2196F3",
-      직업안전: "#009688",
-    };
-
-    const categoryIcons: Record<string, string> = {
-      생활안전: "🏠",
-      교통안전: "🚗",
-      응급처치: "🏥",
-      "폭력예방 및 신변보호": "🛡️",
-      "약물 및 사이버 중독 예방": "💊",
-      재난안전: "⚠️",
-      직업안전: "⚙️",
-    };
-
     markers.forEach((marker) => {
-      const color = categoryColors[marker.category || "생활안전"] ?? "#757575";
-      const icon = categoryIcons[marker.category || ""] || "📍";
+      const categoryUi = getExplorerCategoryByDb(marker.category);
+      const color = "#ef4444";
+      const icon = categoryUi.mapIcon;
 
       const markerInstance = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(marker.lat, marker.lng),
@@ -236,16 +221,16 @@ export default function NaverMap({
               <div style="
                 background:${color};
                 border:3px solid #fff;
-                border-radius:50% 50% 50% 0;
-                width:32px;height:32px;
-                transform:rotate(-45deg);
-                box-shadow:0 3px 8px rgba(0,0,0,.35);
+                border-radius:18px;
+                width:42px;height:42px;
+                box-shadow:0 10px 22px rgba(15,23,42,.24);
                 display:flex;align-items:center;justify-content:center;
               ">
-                <span style="transform:rotate(45deg);font-size:14px;line-height:1;">${icon}</span>
+                <span style="font-size:20px;line-height:1;">${icon}</span>
               </div>
+              <div style="width:10px;height:10px;border-radius:999px;background:${color};border:2px solid #fff;margin-top:-6px;"></div>
             </div>`,
-          anchor: new window.naver.maps.Point(16, 34),
+          anchor: new window.naver.maps.Point(21, 46),
         },
       });
 
@@ -259,7 +244,8 @@ export default function NaverMap({
             <span style="font-size:24px;line-height:1.1;flex-shrink:0;">${icon}</span>
             <div style="flex:1;min-width:0;">
               <div style="font-weight:700;font-size:13px;color:#111827;word-break:break-word;line-height:1.3;">${marker.title || ""}</div>
-              <div style="font-size:11px;color:#6b7280;margin-top:2px;">${marker.category || ""}</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:2px;">${categoryUi.label}${marker.studentName ? ` · ${marker.studentName}` : ""}</div>
+              <div style="font-size:11px;color:#374151;margin-top:2px;">안전영역: ${marker.category || categoryUi.areaName}</div>
             </div>
           </div>
           ${descHtml}
@@ -371,12 +357,12 @@ export default function NaverMap({
   };
 
   const handleSearch = async () => {
-    if (!searchQuery.trim() || !map || !window.naver?.maps) return;
+    if (!searchQuery.trim() || !map) return;
     const query = searchQuery.trim();
     setSearching(true);
     try {
       const coords = await fetchGeocode(query);
-      if (coords) {
+      if (coords && window.naver?.maps) {
         map.setCenter(new window.naver.maps.LatLng(coords.lat, coords.lng));
         map.setZoom(16);
         onCenterChange?.(coords.lat, coords.lng);
@@ -386,10 +372,10 @@ export default function NaverMap({
         setSearchOpen(false);
         setSearchQuery("");
       } else {
-        alert("검색 결과를 찾을 수 없습니다.");
+        alert(`"${query}" 검색 결과를 찾을 수 없습니다. 주소를 더 자세히 입력해보세요.`);
       }
     } catch (err) {
-      alert("검색에 실패했습니다.");
+      alert("위치 검색에 실패했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setSearching(false);
     }
@@ -490,6 +476,8 @@ export default function NaverMap({
                                     map.setCenter(new window.naver.maps.LatLng(coords.lat, coords.lng));
                                     map.setZoom(16);
                                     onCenterChange?.(coords.lat, coords.lng);
+                                    setSearchOpen(false);
+                                    setSearchQuery("");
                                   }
                                 });
                               }}
