@@ -35,6 +35,7 @@ export default function ExplorerMapSection({
       studentName: pin.students?.name ?? undefined,
       onClick: () => onMarkerClick(pin.id),
     }));
+  const visibleMarkers = createMode ? [] : markers;
 
   return (
     <section className="space-y-4">
@@ -67,13 +68,28 @@ export default function ExplorerMapSection({
             </div>
           ))}
         </div>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={onToggleCreateMode}
+            className={`mx-auto flex w-full max-w-sm items-center justify-center gap-3 rounded-[1.4rem] px-6 py-3 text-base font-black transition ${
+              createMode
+                ? "bg-[#e7f0ff] text-blue-700 hover:bg-[#dce9ff]"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+          >
+            <span className="text-xl">{createMode ? "✅" : "📍"}</span>
+            {createMode ? "탐사 위치 선택 종료" : "안전 탐사 기록 시작하기"}
+          </button>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
         <div className="relative h-[58dvh] min-h-[360px] max-h-[560px]">
           <NaverMap
             center={mapCenter}
-            markers={markers}
+            markers={visibleMarkers}
             height="100%"
             showMyLocationButton
             showSearchButton
@@ -105,20 +121,6 @@ export default function ExplorerMapSection({
               </div>
             </div>
           )}
-          <div className="absolute inset-x-0 bottom-4 z-10 px-4">
-            <button
-              type="button"
-              onClick={onToggleCreateMode}
-              className={`mx-auto flex w-full max-w-sm items-center justify-center gap-3 rounded-[1.6rem] px-6 py-4 text-base font-black transition ${
-                createMode
-                  ? "bg-[#e7f0ff] text-blue-700 hover:bg-[#dce9ff]"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-            >
-              <span className="text-xl">{createMode ? "✅" : "📍"}</span>
-              {createMode ? "탐사 위치 선택 종료" : "안전 탐사 기록 시작하기"}
-            </button>
-          </div>
         </div>
       </div>
     </section>

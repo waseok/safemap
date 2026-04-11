@@ -21,7 +21,7 @@ body {
 /* 지도 핀 선택 모드 커서 - 네이버 지도 SDK 커서 덮어쓰기 */
 .selectable-map-cursor,
 .selectable-map-cursor * {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='40' viewBox='0 0 30 40'%3E%3Cpath d='M15 1C9.1 1 4.3 5.8 4.3 11.7c0 8 10.7 19.6 10.7 19.6s10.7-11.6 10.7-19.6C25.7 5.8 20.9 1 15 1z' fill='%23ef4444' stroke='white' stroke-width='2'/%3E%3Ccircle cx='15' cy='11.7' r='4' fill='white'/%3E%3C/svg%3E") 15 34, pointer !important;
+  cursor: grab !important;
 }
 
 @keyframes sheet-up {
