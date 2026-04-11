@@ -82,7 +82,7 @@ export default function ClassCreatePage() {
       <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm">
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">안전 탐사 기록</p>
         <h1 className="mt-2 text-2xl font-black text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-base leading-7 text-slate-600">
           GPS로 현재 위치를 가져와 자동으로 핀을 준비했어요. 사진과 해결 아이디어만 채우면 끝이에요.
         </p>
       </section>
@@ -104,37 +104,43 @@ export default function ClassCreatePage() {
           </button>
         </div>
 
-        <div className="overflow-hidden rounded-[1.6rem] border border-slate-200">
+        <div className="relative overflow-hidden rounded-[1.6rem] border border-slate-200">
           <NaverMap
             center={currentLocation}
             height="360px"
-            markers={[
-              {
-                id: "draft-location",
-                lat: currentLocation.lat,
-                lng: currentLocation.lng,
-                title: "기록될 위치",
-                category: "생활안전",
-                description: "여기에 새 안전 탐사 기록이 생성됩니다.",
-              },
-            ]}
+            markers={[]}
             showMyLocationButton
             showSearchButton
             onCenterChange={(lat, lng) => setCurrentLocation({ lat, lng })}
           />
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2">
+              <div className="relative">
+                <div className="absolute inset-0 animate-ping rounded-full bg-red-400/60" />
+                <div className="relative h-11 w-11 rounded-full bg-white p-1 shadow-md">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-red-500 text-2xl text-white">
+                    📍
+                  </div>
+                </div>
+              </div>
+              <p className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-red-600 shadow-sm">
+                이 위치에 기록됩니다
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-4 rounded-[1.5rem] bg-slate-50 p-4 text-sm text-slate-600">
+        <div className="mt-4 rounded-[1.5rem] bg-slate-50 p-4 text-base text-slate-600">
           {locating
-            ? "현재 위치를 찾는 중이에요..."
+            ? "📡 현재 위치를 찾는 중이에요..."
             : locationError ||
-              `이 위치(${currentLocation.lat.toFixed(5)}, ${currentLocation.lng.toFixed(5)})에 탐사 기록이 남습니다.`}
+              `📍 이 위치(${currentLocation.lat.toFixed(5)}, ${currentLocation.lng.toFixed(5)})에 탐사 기록이 남습니다.`}
         </div>
 
         <button
           type="button"
           onClick={() => setShowWizard(true)}
-          className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-blue-500 px-6 py-4 text-base font-black text-white hover:bg-blue-600"
+          className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-blue-500 px-6 py-5 text-lg font-black text-white hover:bg-blue-600"
         >
           <span className="text-xl">📝</span>
           이 위치로 안전 탐사 기록 시작
