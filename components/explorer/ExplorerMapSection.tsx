@@ -42,18 +42,18 @@ export default function ExplorerMapSection({
       <div className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+            <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
               FIND · SAFE 탐사 단계
             </span>
-            <h1 className="mt-3 text-2xl font-black text-slate-900">우리 동네 안전 탐사 지도</h1>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <h1 className="mt-3 text-2xl text-slate-900">우리 동네 안전 탐사 지도</h1>
+            <p className="mt-2 text-base leading-7 text-slate-500">
               친구들이 남긴 안전 탐사 내용을 보며, 위험한 곳을 바로 기록해 보세요.
             </p>
           </div>
           <div className="rounded-[1.5rem] bg-blue-50 px-4 py-3 text-right">
-            <div className="text-xs text-blue-700">우리 반 기록</div>
-            <div className="mt-1 text-3xl font-black text-blue-700">{pins.length}</div>
-            <div className="text-xs text-blue-700">개의 발견</div>
+            <div className="text-sm text-blue-700">우리 반 기록</div>
+            <div className="mt-1 text-3xl text-blue-700">{pins.length}</div>
+            <div className="text-sm text-blue-700">개의 발견</div>
           </div>
         </div>
 
@@ -61,7 +61,7 @@ export default function ExplorerMapSection({
           {EXPLORER_CATEGORIES.map((category) => (
             <div
               key={category.id}
-              className="inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-3 py-2 text-xs font-semibold text-slate-700"
+              className="inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-3 py-2 text-sm text-slate-700"
             >
               <span>{category.mapIcon}</span>
               <span>{category.label}</span>
@@ -73,7 +73,7 @@ export default function ExplorerMapSection({
           <button
             type="button"
             onClick={onToggleCreateMode}
-            className={`mx-auto flex w-full max-w-sm items-center justify-center gap-3 rounded-[1.4rem] px-6 py-3 text-base font-black transition ${
+            className={`mx-auto flex w-full max-w-sm items-center justify-center gap-3 rounded-[1.4rem] px-6 py-4 text-lg transition ${
               createMode
                 ? "bg-[#e7f0ff] text-blue-700 hover:bg-[#dce9ff]"
                 : "bg-blue-500 text-white hover:bg-blue-600"
@@ -108,7 +108,7 @@ export default function ExplorerMapSection({
                     </div>
                   </div>
                 </div>
-                <p className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-red-600 shadow-sm">
+                <p className="rounded-full bg-white/90 px-3 py-1 text-sm text-red-600 shadow-sm">
                   여기를 눌러 기록 시작
                 </p>
               </div>
@@ -116,7 +116,7 @@ export default function ExplorerMapSection({
           )}
           {createMode && (
             <div className="absolute inset-x-0 top-4 z-10 px-4">
-              <div className="mx-auto max-w-sm rounded-2xl border border-blue-200 bg-white/95 px-4 py-3 text-center text-sm font-semibold text-blue-700 shadow-sm">
+              <div className="mx-auto max-w-sm rounded-2xl border border-blue-200 bg-white/95 px-4 py-3 text-center text-base text-blue-700 shadow-sm">
                 지도에서 위치를 한 번 누르면 그 위치로 안전 탐사 기록을 시작합니다.
               </div>
             </div>

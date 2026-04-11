@@ -28,13 +28,13 @@ export default function ClassBottomNav({ classCode }: ClassBottomNavProps) {
             <Link
               key={item.key}
               href={href}
-              className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[1.3rem] px-2 py-3 text-[11px] font-bold transition ${
+              className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[1.3rem] px-2 py-3 text-sm transition ${
                 active
                   ? "bg-blue-500 text-white shadow-sm"
                   : "text-slate-500 hover:bg-slate-50"
               }`}
             >
-              <span className="text-xl leading-none">{item.icon}</span>
+              <span className="text-2xl leading-none">{item.icon}</span>
               <span className="truncate">{item.label}</span>
             </Link>
           );
