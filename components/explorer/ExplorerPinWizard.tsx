@@ -16,7 +16,7 @@ interface ExplorerPinWizardProps {
 }
 
 const STEP_TITLES = [
-  "1단계 사진 기록",
+  "1단계 사진 기록 (선택)",
   "2단계 위험 종류 선택",
   "3단계 위험도 평가",
   "4단계 해결 아이디어",
@@ -78,10 +78,6 @@ export default function ExplorerPinWizard({
   };
 
   const goNext = () => {
-    if (step === 0 && !imagePreview) {
-      setError("현장 사진을 한 장 올려주세요.");
-      return;
-    }
     if (step === 3 && !title.trim()) {
       setError("친구들이 알아보기 쉬운 제목을 적어주세요.");
       return;
@@ -213,9 +209,9 @@ export default function ExplorerPinWizard({
                 ) : (
                   <div className="flex min-h-56 flex-col items-center justify-center rounded-[1.5rem] bg-white text-center">
                     <span className="text-5xl">📸</span>
-                    <p className="mt-3 text-lg font-bold text-slate-800">현장 사진을 올려주세요</p>
+                    <p className="mt-3 text-lg font-bold text-slate-800">현장 사진을 올리면 더 좋아요</p>
                     <p className="mt-2 text-sm leading-6 text-slate-500">
-                      친구들이 위험한 곳을 바로 이해할 수 있게 사진을 남겨요.
+                      사진 없이 건너뛰고 다음 단계로 바로 넘어갈 수도 있어요.
                     </p>
                   </div>
                 )}
@@ -252,6 +248,15 @@ export default function ExplorerPinWizard({
                   앨범에서 고르기
                 </button>
               </div>
+              {!imagePreview && (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="w-full rounded-[1.4rem] border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600"
+                >
+                  사진 건너뛰고 다음 단계로
+                </button>
+              )}
             </div>
           )}
 

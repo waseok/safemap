@@ -21,6 +21,9 @@ export default function TeacherDashboardPage() {
   const [className, setClassName] = useState("");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
+  const [editingPinId, setEditingPinId] = useState<string | null>(null);
+  const [pinDraft, setPinDraft] = useState("");
+  const [pinSaving, setPinSaving] = useState(false);
 
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
   const [classPins, setClassPins] = useState<PinWithStudent[]>([]);
@@ -78,6 +81,41 @@ export default function TeacherDashboardPage() {
       setError(msg);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const beginEditClassPin = (classItem: Class) => {
+    setEditingPinId(classItem.id);
+    setPinDraft(classItem.pin);
+  };
+
+  const saveClassPin = async (classItem: Class) => {
+    if (!/^\d{4}$/.test(pinDraft)) {
+      alert("PIN은 4자리 숫자여야 합니다.");
+      return;
+    }
+
+    setPinSaving(true);
+    try {
+      const res = await fetch("/api/classes", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId: classItem.id, pin: pinDraft }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "PIN 수정에 실패했습니다.");
+      }
+
+      const updatedClass = data.class as Class;
+      setClasses((prev) => prev.map((item) => (item.id === classItem.id ? updatedClass : item)));
+      setSelectedClass((prev) => (prev && prev.id === classItem.id ? updatedClass : prev));
+      setEditingPinId(null);
+      setPinDraft("");
+    } catch (err: any) {
+      alert(err.message || "PIN 수정 실패");
+    } finally {
+      setPinSaving(false);
     }
   };
 
@@ -159,7 +197,7 @@ export default function TeacherDashboardPage() {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">교사 대시보드</h1>
+          <h1 className="text-3xl font-bold">우리반 안전탐사 코치 보드</h1>
           <button
             onClick={() => router.push("/")}
             className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
@@ -232,23 +270,72 @@ export default function TeacherDashboardPage() {
                   <div className="flex justify-between items-center">
                     <div>
                       <h3 className="font-semibold text-lg">{classItem.name}</h3>
-                      <p className="text-sm text-gray-500">
-                        PIN: <span className="font-mono font-bold text-blue-600 text-xl">{classItem.pin}</span>
-                      </p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+                        <span>입장코드:</span>
+                        {editingPinId === classItem.id ? (
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="\d*"
+                            maxLength={4}
+                            value={pinDraft}
+                            onChange={(e) => setPinDraft(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                            className="w-24 rounded border border-blue-200 px-2 py-1 font-mono font-bold text-blue-700"
+                          />
+                        ) : (
+                          <span className="font-mono font-bold text-blue-600 text-xl">{classItem.pin}</span>
+                        )}
+                      </div>
                     </div>
                     <div className="flex gap-2">
+                      {editingPinId === classItem.id ? (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              saveClassPin(classItem);
+                            }}
+                            disabled={pinSaving}
+                            className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50"
+                          >
+                            {pinSaving ? "저장 중..." : "코드 저장"}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingPinId(null);
+                              setPinDraft("");
+                            }}
+                            className="px-3 py-1 bg-gray-100 text-gray-600 rounded text-sm hover:bg-gray-200"
+                          >
+                            취소
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            beginEditClassPin(classItem);
+                          }}
+                          className="px-3 py-1 bg-blue-50 text-blue-700 rounded text-sm hover:bg-blue-100"
+                        >
+                          코드 수정
+                        </button>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           navigator.clipboard.writeText(classItem.pin);
-                          alert(`PIN ${classItem.pin}이 복사되었습니다!`);
+                          alert(`입장코드 ${classItem.pin}이 복사되었습니다!`);
                         }}
                         className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300"
                       >
-                        PIN 복사
+                        코드 복사
                       </button>
                       <span className="px-3 py-1 text-blue-600 text-sm">
-                        {selectedClass?.id === classItem.id ? "선택됨" : "클릭하여 핀 보기"}
+                        {selectedClass?.id === classItem.id
+                          ? "선택됨"
+                          : "우리반 안전탐사 내용 살펴보기 · 피드백"}
                       </span>
                     </div>
                   </div>
@@ -262,7 +349,7 @@ export default function TeacherDashboardPage() {
         {selectedClass && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedClass.name} - 학생 핀 목록
+              {selectedClass.name} - 안전 탐사 기록 목록
             </h2>
 
             {pinsLoading ? (

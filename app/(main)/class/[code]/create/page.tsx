@@ -80,7 +80,7 @@ export default function ClassCreatePage() {
   return (
     <div className="space-y-4">
       <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm">
-        <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">핀 등록</p>
+        <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-600">안전 탐사 기록</p>
         <h1 className="mt-2 text-2xl font-black text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">
           GPS로 현재 위치를 가져와 자동으로 핀을 준비했어요. 사진과 해결 아이디어만 채우면 끝이에요.
@@ -113,9 +113,9 @@ export default function ClassCreatePage() {
                 id: "draft-location",
                 lat: currentLocation.lat,
                 lng: currentLocation.lng,
-                title: "현재 기록할 위치",
+                title: "기록될 위치",
                 category: "생활안전",
-                description: "여기에 새 탐사 핀이 등록됩니다.",
+                description: "여기에 새 안전 탐사 기록이 생성됩니다.",
               },
             ]}
             showMyLocationButton
@@ -127,7 +127,8 @@ export default function ClassCreatePage() {
         <div className="mt-4 rounded-[1.5rem] bg-slate-50 p-4 text-sm text-slate-600">
           {locating
             ? "현재 위치를 찾는 중이에요..."
-            : locationError || "위치를 확인했다면 아래 버튼으로 탐사 기록을 시작하세요."}
+            : locationError ||
+              `이 위치(${currentLocation.lat.toFixed(5)}, ${currentLocation.lng.toFixed(5)})에 탐사 기록이 남습니다.`}
         </div>
 
         <button
@@ -136,7 +137,7 @@ export default function ClassCreatePage() {
           className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-blue-500 px-6 py-4 text-base font-black text-white hover:bg-blue-600"
         >
           <span className="text-xl">📝</span>
-          이 위치로 탐사 기록 시작
+          이 위치로 안전 탐사 기록 시작
         </button>
       </section>
 

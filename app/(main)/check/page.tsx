@@ -11,7 +11,7 @@ export default function CheckPage() {
   const [tab, setTab] = useState<Tab>("map");
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "map", label: "지도 보기" },
+    { key: "map", label: "탐사 지도" },
     { key: "create", label: "안전점검하기 (사진과 내용 쓰기)" },
     { key: "checklist", label: "✅ 안전 체크리스트" },
   ];

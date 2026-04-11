@@ -9,16 +9,16 @@ interface ClassBottomNavProps {
 }
 
 const NAV_ITEMS = [
-  { key: "map", label: "지도 보기", icon: "🗺️" },
-  { key: "create", label: "핀 등록", icon: "➕" },
-  { key: "gallery", label: "우리반 갤러리", icon: "🖼️" },
+  { key: "map", label: "탐사 지도", icon: "🗺️" },
+  { key: "create", label: "위험 기록", icon: "🧭" },
+  { key: "gallery", label: "탐사 기록", icon: "📚" },
 ] as const;
 
 export default function ClassBottomNav({ classCode }: ClassBottomNavProps) {
   const pathname = usePathname();
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(env(safe-area-inset-bottom)+0.9rem)]">
+    <div className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)]">
       <nav className="mx-auto flex max-w-xl items-center justify-between rounded-[2rem] border border-slate-200 bg-white/95 p-2 shadow-[0_12px_40px_rgba(15,23,42,0.18)] backdrop-blur">
         {NAV_ITEMS.map((item) => {
           const href = getClassRoute(classCode, item.key);
