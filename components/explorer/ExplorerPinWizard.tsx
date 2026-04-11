@@ -5,8 +5,8 @@ import { getReverseGeocode } from "@/lib/naver-map";
 import { getClassId, getStudentId } from "@/lib/session";
 import {
   DANGER_LEVELS,
-  EXPLORER_CATEGORIES,
-  getExplorerCategoryById,
+  SAFETY_AREA_ORDER,
+  getExplorerCategoryByDb,
 } from "@/lib/explorer";
 
 interface ExplorerPinWizardProps {
@@ -17,10 +17,20 @@ interface ExplorerPinWizardProps {
 
 const STEP_TITLES = [
   "1단계 사진 기록 (선택)",
-  "2단계 위험 종류 선택",
+  "2단계 7대 안전영역 선택",
   "3단계 위험도 평가",
   "4단계 해결 아이디어",
 ] as const;
+
+const SAFETY_AREA_HELP_TEXT: Record<string, string> = {
+  생활안전: "일상생활에서 다치기 쉬운 요소를 기록해요.",
+  교통안전: "자동차, 오토바이, 횡단보도 등 교통 위험을 살펴요.",
+  응급처치: "응급상황에서 도움이 필요한 요소를 찾아요.",
+  "폭력예방 및 신변보호": "신변 보호가 필요한 위험 상황을 기록해요.",
+  "약물 및 사이버 중독 예방": "약물, 스마트폰, 사이버 위험을 점검해요.",
+  재난안전: "화재, 붕괴, 자연재해와 관련된 위험을 찾아요.",
+  직업안전: "공사장, 작업 구역 등 직업 관련 위험을 살펴요.",
+};
 
 export default function ExplorerPinWizard({
   location,
@@ -28,9 +38,7 @@ export default function ExplorerPinWizard({
   onSuccess,
 }: ExplorerPinWizardProps) {
   const [step, setStep] = useState(0);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<"traffic" | "facility" | "people" | "structure">(
-    "facility"
-  );
+  const [selectedSafetyArea, setSelectedSafetyArea] = useState<(typeof SAFETY_AREA_ORDER)[number]>("생활안전");
   const [dangerLevel, setDangerLevel] = useState<number>(3);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -44,8 +52,8 @@ export default function ExplorerPinWizard({
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCategory = useMemo(
-    () => getExplorerCategoryById(selectedCategoryId),
-    [selectedCategoryId]
+    () => getExplorerCategoryByDb(selectedSafetyArea),
+    [selectedSafetyArea]
   );
 
   useEffect(() => {
@@ -120,7 +128,7 @@ export default function ExplorerPinWizard({
           class_id: classId,
           student_id: studentId,
           location_type: "마을",
-          category: selectedCategory.dbCategory,
+          category: selectedSafetyArea,
           title: title.trim(),
           description: description.trim(),
           danger_level: dangerLevel,
@@ -262,34 +270,37 @@ export default function ExplorerPinWizard({
 
           {step === 1 && (
             <div className="space-y-3">
-              {EXPLORER_CATEGORIES.map((category) => {
-                const active = category.id === selectedCategoryId;
+              {SAFETY_AREA_ORDER.map((areaName) => {
+                const area = getExplorerCategoryByDb(areaName);
+                const active = areaName === selectedSafetyArea;
                 return (
                   <button
-                    key={category.id}
+                    key={areaName}
                     type="button"
-                    onClick={() => setSelectedCategoryId(category.id)}
+                    onClick={() => setSelectedSafetyArea(areaName)}
                     className={`w-full rounded-[1.5rem] border p-4 text-left transition ${
                       active
-                        ? `${category.surfaceClassName} ${category.borderClassName} shadow-md`
+                        ? `${area.surfaceClassName} ${area.borderClassName} shadow-md`
                         : "border-slate-200 bg-white"
                     }`}
                   >
                     <div className="flex items-start gap-4">
                       <div
                         className="flex h-14 w-14 items-center justify-center rounded-[1.2rem] text-2xl text-white"
-                        style={{ backgroundColor: category.accentColor }}
+                        style={{ backgroundColor: area.accentColor }}
                       >
-                        {category.mapIcon}
+                        {area.mapIcon}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-lg font-black text-slate-900">{category.label}</span>
-                          <span className={`rounded-full px-2 py-1 text-xs font-bold ${category.surfaceClassName} ${category.textClassName}`}>
-                            {category.badgeIcon}
+                          <span className="text-base font-black text-slate-900">{areaName}</span>
+                          <span className={`rounded-full px-2 py-1 text-xs font-bold ${area.surfaceClassName} ${area.textClassName}`}>
+                            {area.badgeIcon}
                           </span>
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-slate-500">{category.description}</p>
+                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                          {SAFETY_AREA_HELP_TEXT[areaName]}
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -310,8 +321,8 @@ export default function ExplorerPinWizard({
                     {selectedCategory.mapIcon}
                   </div>
                   <div>
-                    <p className="text-lg font-black text-slate-900">{selectedCategory.label}</p>
-                    <p className="text-sm text-slate-500">{selectedCategory.description}</p>
+                    <p className="text-lg font-black text-slate-900">{selectedSafetyArea}</p>
+                    <p className="text-sm text-slate-500">{SAFETY_AREA_HELP_TEXT[selectedSafetyArea]}</p>
                   </div>
                 </div>
               </div>

@@ -162,6 +162,16 @@ const SAFETY_AREA_VISUALS: Record<string, SafetyAreaVisual> = {
   },
 };
 
+export const SAFETY_AREA_ORDER = [
+  "생활안전",
+  "교통안전",
+  "응급처치",
+  "폭력예방 및 신변보호",
+  "약물 및 사이버 중독 예방",
+  "재난안전",
+  "직업안전",
+] as const;
+
 export function getExplorerCategoryByDb(category: string | null | undefined): SafetyAreaVisual {
   if (!category) return SAFETY_AREA_VISUALS["생활안전"];
   return SAFETY_AREA_VISUALS[category] ?? SAFETY_AREA_VISUALS["생활안전"];
