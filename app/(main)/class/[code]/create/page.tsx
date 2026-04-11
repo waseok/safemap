@@ -81,7 +81,7 @@ export default function ClassCreatePage() {
     <div className="space-y-4">
       <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm">
         <p className="text-sm tracking-[0.2em] text-blue-600">안전 탐사 기록</p>
-        <h1 className="mt-2 text-2xl text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
+        <h1 className="mt-2 text-2xl font-bold text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
         <p className="mt-2 text-base leading-7 text-slate-500">
           GPS로 현재 위치를 가져와 자동으로 핀을 준비했어요. 사진과 해결 아이디어만 채우면 끝이에요.
         </p>

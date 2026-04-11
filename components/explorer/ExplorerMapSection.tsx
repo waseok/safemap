@@ -45,7 +45,7 @@ export default function ExplorerMapSection({
             <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
               FIND · SAFE 탐사 단계
             </span>
-            <h1 className="mt-3 text-2xl text-slate-900">우리 동네 안전 탐사 지도</h1>
+            <h1 className="mt-3 text-2xl font-bold text-slate-900">우리 동네 안전 탐사 지도</h1>
             <p className="mt-2 text-base leading-7 text-slate-500">
               친구들이 남긴 안전 탐사 내용을 보며, 위험한 곳을 바로 기록해 보세요.
             </p>

@@ -70,7 +70,7 @@ export default function TeacherLoginPage() {
             <Image src="/logo.png" alt="SAFE 로고" width={112} height={112} className="object-contain" />
           </div>
         </div>
-        <h1 className="text-center text-3xl font-black text-slate-900 mb-2">교사 로그인</h1>
+        <h1 className="text-center text-3xl font-bold text-slate-900 mb-2">교사 로그인</h1>
         <p className="mb-6 text-center text-sm text-slate-500">SAFE 탐사 지도 운영 페이지</p>
         
         <form onSubmit={handleSubmit} className="space-y-4">

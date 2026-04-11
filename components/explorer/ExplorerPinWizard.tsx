@@ -177,7 +177,7 @@ export default function ExplorerPinWizard({
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm tracking-[0.2em] text-blue-600">탐사 기록</p>
-                <h2 className="mt-2 text-2xl text-slate-900">{STEP_TITLES[step]}</h2>
+                <h2 className="mt-2 text-2xl font-bold text-slate-900">{STEP_TITLES[step]}</h2>
                 <div className="mt-2 flex items-center gap-2">
                   <span className="whitespace-nowrap text-sm text-slate-400">
                     {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
