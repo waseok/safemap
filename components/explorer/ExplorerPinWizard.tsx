@@ -16,7 +16,7 @@ interface ExplorerPinWizardProps {
 }
 
 const STEP_TITLES = [
-  "1단계 사진 기록 (선택)",
+  "1단계 사진 기록",
   "2단계 7대 안전영역 선택",
   "3단계 위험도 평가",
   "4단계 해결 아이디어",
@@ -43,6 +43,8 @@ export default function ExplorerPinWizard({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [proposal, setProposal] = useState("");
+  const [question, setQuestion] = useState("");
+  const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -121,6 +123,15 @@ export default function ExplorerPinWizard({
         imageUrl = uploadData.url;
       }
 
+      const fullDescription = [
+        description.trim(),
+        question.trim() ? `\n\n🔍 탐구적 질문: ${question.trim()}` : "",
+      ].join("");
+
+      const finalAddress = locationName.trim()
+        ? `${locationName.trim()} (${location.lat.toFixed(5)}, ${location.lng.toFixed(5)})`
+        : address || null;
+
       const res = await fetch("/api/pins", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,13 +141,13 @@ export default function ExplorerPinWizard({
           location_type: "마을",
           category: selectedSafetyArea,
           title: title.trim(),
-          description: description.trim(),
+          description: fullDescription,
           danger_level: dangerLevel,
           cause: proposal.trim() || null,
           predicted_accident: null,
           latitude: location.lat,
           longitude: location.lng,
-          address: address || null,
+          address: finalAddress,
           image_url: imageUrl,
         }),
       });
@@ -160,37 +171,50 @@ export default function ExplorerPinWizard({
 
   return (
     <div className="fixed inset-0 z-50 bg-blue-200/35 backdrop-blur-sm">
-      <div className="flex min-h-full items-end justify-center p-0 sm:items-center sm:p-6">
-        <div className="animate-sheet-up w-full max-w-lg rounded-t-[2rem] bg-white p-5 shadow-2xl sm:rounded-[2rem]">
-          <div className="mb-5 flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-blue-600">탐사 기록</p>
-              <h2 className="mt-2 text-2xl font-black text-slate-900">{STEP_TITLES[step]}</h2>
-              <p className="mt-2 text-sm text-slate-500">
-                {address || `${location.lat.toFixed(5)}, ${location.lng.toFixed(5)}`}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
-              aria-label="닫기"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="mb-5 flex gap-2">
-            {STEP_TITLES.map((item, index) => (
-              <div key={item} className="flex-1">
-                <div
-                  className={`h-2 rounded-full transition ${
-                    index <= step ? "bg-blue-500" : "bg-slate-100"
-                  }`}
+      <div className="flex h-full items-end justify-center p-0 sm:items-center sm:p-6">
+        <div className="animate-sheet-up flex w-full max-w-lg flex-col rounded-t-[2rem] bg-white shadow-2xl sm:rounded-[2rem]" style={{ maxHeight: "92dvh" }}>
+          <div className="flex-shrink-0 px-5 pt-5">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-blue-600">탐사 기록</p>
+                <h2 className="mt-2 text-2xl font-black text-slate-900">{STEP_TITLES[step]}</h2>
+              <div className="mt-2 flex items-center gap-2">
+                <span className="whitespace-nowrap text-sm text-slate-400">
+                  {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
+                </span>
+                <input
+                  type="text"
+                  value={locationName}
+                  onChange={(event) => setLocationName(event.target.value)}
+                  placeholder="위치 이름 입력 (예: 학교 앞 횡단보도)"
+                  className="min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
                 />
               </div>
-            ))}
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+                aria-label="닫기"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mb-5 flex gap-2">
+              {STEP_TITLES.map((item, index) => (
+                <div key={item} className="flex-1">
+                  <div
+                    className={`h-2 rounded-full transition ${
+                      index <= step ? "bg-blue-500" : "bg-slate-100"
+                    }`}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
+
+          <div className="flex-1 overflow-y-auto px-5">{/* scrollable content start */}
 
           {step === 0 && (
             <div className="space-y-4">
@@ -353,35 +377,50 @@ export default function ExplorerPinWizard({
           )}
 
           {step === 3 && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">한 줄 제목</label>
+                <label className="mb-2 block text-base font-bold text-slate-700">한 줄 제목</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
                   placeholder="예: 골목 입구의 신호등이 안 보여요"
-                  className="w-full rounded-[1.4rem] border border-slate-200 px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">무엇을 발견했나요?</label>
+                <label className="mb-2 block text-base font-bold text-slate-700">무엇을 발견했나요?</label>
                 <textarea
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
                   rows={3}
                   placeholder="친구들이 읽고 바로 이해할 수 있게 자세히 적어주세요."
-                  className="w-full rounded-[1.4rem] border border-slate-200 px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-7 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">해결 방법을 제안해 볼까요?</label>
+                <label className="mb-2 block text-base font-bold text-slate-700">해결 방법을 제안해 볼까요?</label>
                 <textarea
                   value={proposal}
                   onChange={(event) => setProposal(event.target.value)}
-                  rows={4}
+                  rows={3}
                   placeholder="예: 안내 표지판을 더 크게 만들고, 선생님이나 구청에 알려서 빨리 고치면 좋아요."
-                  className="w-full rounded-[1.4rem] border border-slate-200 px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-7 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-base font-bold text-slate-700">
+                  🔍 탐구적 질문 만들기
+                </label>
+                <p className="mb-3 text-sm leading-6 text-slate-500">
+                  이 위험에 대해 더 알아보고 싶은 것을 질문으로 만들어 보세요.
+                </p>
+                <textarea
+                  value={question}
+                  onChange={(event) => setQuestion(event.target.value)}
+                  rows={2}
+                  placeholder="예: 이 횡단보도에서 사고가 자주 나는 이유는 무엇일까?"
+                  className="w-full rounded-[1.4rem] border border-slate-200 px-5 py-4 text-lg leading-7 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -392,33 +431,36 @@ export default function ExplorerPinWizard({
               {error}
             </div>
           )}
+          </div>{/* scrollable content end */}
 
-          <div className="mt-6 flex gap-3">
-            <button
-              type="button"
-              onClick={step === 0 ? onClose : goPrev}
-              className="flex-1 rounded-[1.4rem] bg-slate-100 px-4 py-4 font-bold text-slate-700"
-            >
-              {step === 0 ? "닫기" : "이전"}
-            </button>
-            {step < STEP_TITLES.length - 1 ? (
+          <div className="flex-shrink-0 border-t border-slate-100 px-5 pb-5 pt-4">
+            <div className="flex gap-3">
               <button
                 type="button"
-                onClick={goNext}
-                className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white"
+                onClick={step === 0 ? onClose : goPrev}
+                className="flex-1 rounded-[1.4rem] bg-slate-100 px-4 py-4 font-bold text-slate-700"
               >
-                다음
+                {step === 0 ? "닫기" : "이전"}
               </button>
-            ) : (
-              <button
-                type="button"
-                disabled={loading}
-                onClick={handleSubmit}
-                className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white disabled:opacity-50"
-              >
-                {loading ? "저장 중..." : "탐사 기록 완료"}
-              </button>
-            )}
+              {step < STEP_TITLES.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white"
+                >
+                  다음
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled={loading}
+                  onClick={handleSubmit}
+                  className="flex-1 rounded-[1.4rem] bg-blue-500 px-4 py-4 font-bold text-white disabled:opacity-50"
+                >
+                  {loading ? "저장 중..." : "탐사 기록 완료"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
