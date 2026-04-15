@@ -79,32 +79,32 @@ export default function ClassCreatePage() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm">
-        <p className="text-sm tracking-[0.2em] text-blue-600">안전 탐사 기록</p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900">지금 서 있는 자리에서 바로 기록하기</h1>
-        <p className="mt-2 text-base leading-7 text-slate-500">
+      <section className="rounded-panel border border-[var(--color-border)] bg-white p-5 shadow-sm">
+        <p className="text-sm text-[var(--color-info)]">안전 탐사 기록</p>
+        <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">지금 서 있는 자리에서 바로 기록하기</h1>
+        <p className="mt-2 text-base leading-7 text-[var(--color-text-secondary)]">
           GPS로 현재 위치를 가져와 자동으로 핀을 준비했어요. 사진과 해결 아이디어만 채우면 끝이에요.
         </p>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="rounded-panel border border-[var(--color-border)] bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
-            <p className="text-base text-slate-800">현재 위치 미리보기</p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="text-base text-[var(--color-text-primary)]">현재 위치 미리보기</p>
+            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
               GPS가 잡히지 않으면 서울 시청 기준 위치가 보일 수 있어요.
             </p>
           </div>
           <button
             type="button"
             onClick={locateCurrentPosition}
-            className="rounded-full bg-slate-100 px-4 py-2 text-base text-slate-700 transition hover:bg-slate-200"
+            className="rounded-card border border-[var(--color-border)] bg-white px-4 py-2 text-base text-[var(--color-text-secondary)] transition-colors hover:bg-slate-50"
           >
             다시 찾기
           </button>
         </div>
 
-        <div className="relative overflow-hidden rounded-[1.6rem] border border-slate-200">
+        <div className="relative overflow-hidden rounded-panel border border-[var(--color-border)]">
           <NaverMap
             center={currentLocation}
             height="360px"
@@ -116,21 +116,21 @@ export default function ClassCreatePage() {
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
             <div className="flex flex-col items-center gap-2">
               <div className="relative">
-                <div className="absolute inset-0 animate-ping rounded-full bg-red-400/60" />
-                <div className="relative h-11 w-11 rounded-full bg-white p-1 shadow-md">
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-red-500 text-2xl text-white">
+                <div className="absolute inset-0 animate-ping rounded-full bg-[var(--color-danger)]/40" />
+                <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white p-1 shadow-md">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-[var(--color-danger)] text-2xl text-white">
                     📍
                   </div>
                 </div>
               </div>
-              <p className="rounded-full bg-white/90 px-3 py-1 text-sm text-red-600 shadow-sm">
+              <p className="rounded-md bg-white/90 px-3 py-1 text-sm text-[var(--color-danger)] shadow-sm">
                 이 위치에 기록됩니다
               </p>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 rounded-[1.5rem] bg-slate-50 p-4 text-base text-slate-600">
+        <div className="mt-4 rounded-card bg-slate-50 p-4 text-base text-[var(--color-text-secondary)]">
           {locating
             ? "📡 현재 위치를 찾는 중이에요..."
             : locationError ||
@@ -140,7 +140,7 @@ export default function ClassCreatePage() {
         <button
           type="button"
           onClick={() => setShowWizard(true)}
-          className="mt-4 flex w-full items-center justify-center gap-3 rounded-[1.6rem] bg-blue-500 px-6 py-5 text-xl text-white hover:bg-blue-600"
+          className="mt-4 flex w-full items-center justify-center gap-3 rounded-card bg-[var(--color-info)] px-6 py-5 text-xl text-white transition-colors hover:bg-blue-700"
         >
           <span className="text-2xl">📝</span>
           이 위치로 안전 탐사 기록 시작

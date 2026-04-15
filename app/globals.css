@@ -27,23 +27,32 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-border: #E2E8F0;
+
+  --color-safe: #16A34A;
+  --color-safe-soft: #DCFCE7;
+  --color-caution: #F59E0B;
+  --color-caution-soft: #FEF3C7;
+  --color-danger: #DC2626;
+  --color-danger-soft: #FEE2E2;
+  --color-info: #2563EB;
+  --color-info-soft: #DBEAFE;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
   font-family: "Gong Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: 300;
   overflow-x: hidden;
-}
-
-body {
   min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* 지도 핀 선택 모드 커서 - 네이버 지도 SDK 커서 덮어쓰기 */
 .selectable-map-cursor,
 .selectable-map-cursor * {
   cursor: grab !important;
@@ -92,7 +101,7 @@ body {
   }
 
   .animate-sheet-up {
-    animation: sheet-up 220ms ease-out;
+    animation: sheet-up 200ms ease-out;
   }
 
   .animate-celebrate-pop {
