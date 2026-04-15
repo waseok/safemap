@@ -19,7 +19,6 @@ export default function TeacherLoginPage() {
     setLoading(true);
     setError("");
 
-    // 환경 변수 체크
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       setError("Supabase 환경 변수가 설정되지 않았습니다. .env.local 파일을 확인해주세요.");
       setLoading(false);
@@ -28,7 +27,6 @@ export default function TeacherLoginPage() {
 
     try {
       if (isSignUp) {
-        // 회원가입
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -40,7 +38,6 @@ export default function TeacherLoginPage() {
           router.push("/teacher/dashboard");
         }
       } else {
-        // 로그인
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -61,21 +58,19 @@ export default function TeacherLoginPage() {
   };
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-[#edf6ff] p-4">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.08)_1px,transparent_1px)] bg-[size:26px_26px]" />
-      <div className="relative flex min-h-dvh items-center justify-center">
-      <div className="w-full max-w-md rounded-[2rem] border border-blue-100 bg-white p-8 shadow-sm">
-        <div className="mb-4 flex justify-center">
-          <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[#f2f8ff]">
-            <Image src="/logo.png" alt="SAFE 로고" width={112} height={112} className="object-contain" />
+    <div className="flex min-h-dvh items-center justify-center bg-[var(--color-bg)] p-4">
+      <div className="w-full max-w-md rounded-panel border border-[var(--color-border)] bg-white p-8 shadow-sm">
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-28 w-28 items-center justify-center rounded-full bg-slate-50">
+            <Image src="/logo.png" alt="SAFE 로고" width={96} height={96} className="object-contain" />
           </div>
         </div>
-        <h1 className="text-center text-3xl font-bold text-slate-900 mb-2">교사 로그인</h1>
-        <p className="mb-6 text-center text-sm text-slate-500">SAFE 탐사 지도 운영 페이지</p>
+        <h1 className="mb-2 text-center text-2xl font-bold text-[var(--color-text-primary)]">교사 로그인</h1>
+        <p className="mb-6 text-center text-base text-[var(--color-text-secondary)]">SAFE 탐사 지도 운영 페이지</p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="mb-2 block text-base text-[var(--color-text-secondary)]">
               이메일
             </label>
             <input
@@ -84,12 +79,12 @@ export default function TeacherLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-3xl border border-gray-300 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-card border border-[var(--color-border)] px-4 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-info)]"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="mb-2 block text-base text-[var(--color-text-secondary)]">
               비밀번호
             </label>
             <input
@@ -98,18 +93,20 @@ export default function TeacherLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-3xl border border-gray-300 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-card border border-[var(--color-border)] px-4 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-info)]"
             />
           </div>
 
           {error && (
-            <div className="text-red-500 text-sm">{error}</div>
+            <div className="rounded-card bg-[var(--color-danger-soft)] px-4 py-3 text-base text-[var(--color-danger)]">
+              {error}
+            </div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-3xl bg-blue-500 py-4 font-bold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-card bg-[var(--color-info)] py-4 text-lg text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "처리 중..." : isSignUp ? "회원가입" : "로그인"}
           </button>
@@ -118,18 +115,17 @@ export default function TeacherLoginPage() {
         <div className="mt-4 text-center">
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm text-blue-500 hover:text-blue-600"
+            className="text-base text-[var(--color-info)] hover:underline"
           >
             {isSignUp ? "이미 계정이 있으신가요? 로그인" : "계정이 없으신가요? 회원가입"}
           </button>
         </div>
 
         <div className="mt-6 text-center">
-          <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
+          <a href="/" className="text-base text-[var(--color-text-secondary)] hover:text-[var(--color-info)]">
             홈으로 돌아가기
           </a>
         </div>
-      </div>
       </div>
     </div>
   );

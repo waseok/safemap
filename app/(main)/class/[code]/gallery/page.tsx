@@ -33,35 +33,35 @@ export default function ClassGalleryPage() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-[2rem] border border-emerald-100 bg-white p-5 shadow-sm">
+      <section className="rounded-panel border border-[var(--color-border)] bg-white p-5 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm tracking-[0.2em] text-emerald-600">안전 탐사 기록</p>
-            <h1 className="mt-2 text-2xl font-bold text-slate-900">친구들이 남긴 안전 탐사 내용</h1>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
+            <p className="text-sm text-[var(--color-safe)]">안전 탐사 기록</p>
+            <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">친구들이 남긴 안전 탐사 내용</h1>
+            <p className="mt-2 text-base text-[var(--color-text-secondary)]">
               사진, 위험도, 해결 아이디어를 한눈에 모아 보며 우리 동네를 더 안전하게 바꿔 보세요.
             </p>
           </div>
-          <div className="grid min-w-[132px] grid-cols-1 gap-2 text-center">
-            <div className="rounded-[1.4rem] bg-blue-50 px-3 py-3">
-              <div className="text-xs font-bold text-blue-600">전체 핀</div>
-              <div className="mt-1 text-2xl font-bold text-blue-700">{pins.length}</div>
+          <div className="grid min-w-[120px] grid-cols-1 gap-2 text-center">
+            <div className="rounded-card bg-[var(--color-info-soft)] px-3 py-2.5">
+              <div className="text-sm text-[var(--color-info)]">전체 핀</div>
+              <div className="mt-1 text-2xl font-bold text-[var(--color-info)]">{pins.length}</div>
             </div>
-            <div className="rounded-[1.4rem] bg-emerald-50 px-3 py-3">
-              <div className="text-xs font-bold text-emerald-600">참여 친구</div>
-              <div className="mt-1 text-2xl font-bold text-emerald-700">{explorerCount}</div>
+            <div className="rounded-card bg-[var(--color-safe-soft)] px-3 py-2.5">
+              <div className="text-sm text-[var(--color-safe)]">참여 친구</div>
+              <div className="mt-1 text-2xl font-bold text-[var(--color-safe)]">{explorerCount}</div>
             </div>
           </div>
         </div>
       </section>
 
       {loading ? (
-        <div className="rounded-[2rem] bg-white p-10 text-center shadow-sm">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600" />
-          <p className="mt-4 text-sm font-medium text-slate-500">친구들의 기록을 불러오는 중이에요.</p>
+        <div className="rounded-panel bg-white p-10 text-center shadow-sm">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[var(--color-safe-soft)] border-t-[var(--color-safe)]" />
+          <p className="mt-4 text-base text-[var(--color-text-secondary)]">친구들의 기록을 불러오는 중이에요.</p>
         </div>
       ) : error ? (
-        <div className="rounded-[2rem] border border-rose-200 bg-rose-50 p-5 text-sm font-medium text-rose-600">
+        <div className="rounded-panel bg-[var(--color-danger-soft)] p-5 text-base text-[var(--color-danger)]">
           {error}
         </div>
       ) : (

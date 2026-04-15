@@ -58,35 +58,31 @@ export default function ClassMapPage() {
   }, [celebration]);
 
   const summary = useMemo(() => {
-    if (loading) {
-      return "지도를 준비하는 중이에요...";
-    }
-    if (error) {
-      return error;
-    }
+    if (loading) return "지도를 준비하는 중이에요...";
+    if (error) return error;
     return `${pins.length}개의 위험 핀이 우리 반 지도에 표시되고 있어요.`;
   }, [error, loading, pins.length]);
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[1.8rem] border border-blue-100 bg-white p-4 shadow-sm">
+      <div className="rounded-panel border border-[var(--color-border)] bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm tracking-[0.2em] text-blue-600">Map View</p>
-            <h2 className="mt-1 text-xl font-bold text-slate-900">우리반 안전 탐사 상태</h2>
-            <p className="mt-2 text-sm text-slate-500">{summary}</p>
+            <p className="text-sm text-[var(--color-info)]">Map View</p>
+            <h2 className="mt-1 text-xl font-bold text-[var(--color-text-primary)]">우리반 안전 탐사 상태</h2>
+            <p className="mt-2 text-base text-[var(--color-text-secondary)]">{summary}</p>
           </div>
-          <div className="rounded-[1.4rem] bg-emerald-50 px-4 py-3 text-center">
-            <p className="text-xs font-bold text-emerald-700">탐사 상태</p>
-            <p className="mt-1 text-lg font-bold text-emerald-600">실시간 공유</p>
+          <div className="rounded-card bg-[var(--color-safe-soft)] px-4 py-3 text-center">
+            <p className="text-sm text-[var(--color-safe)]">탐사 상태</p>
+            <p className="mt-1 text-lg font-bold text-[var(--color-safe)]">실시간 공유</p>
           </div>
         </div>
       </div>
 
       {loading ? (
-        <div className="rounded-[2rem] bg-white p-10 text-center shadow-sm">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
-          <p className="mt-4 text-sm font-medium text-slate-500">탐사 지도를 불러오는 중이에요.</p>
+        <div className="rounded-panel bg-white p-10 text-center shadow-sm">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[var(--color-info-soft)] border-t-[var(--color-info)]" />
+          <p className="mt-4 text-base text-[var(--color-text-secondary)]">탐사 지도를 불러오는 중이에요.</p>
         </div>
       ) : (
         <ExplorerMapSection

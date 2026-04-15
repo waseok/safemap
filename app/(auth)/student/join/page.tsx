@@ -92,19 +92,19 @@ export default function StudentJoinPage() {
   };
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-[#edf6ff] px-4 py-8">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.08)_1px,transparent_1px)] bg-[size:26px_26px]" />
-      <div className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-md items-center justify-center">
-        <div className="w-full rounded-[2rem] border border-blue-100 bg-white p-7 shadow-sm">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-slate-900">학급 입장</h1>
-            <p className="mt-2 text-sm leading-6 text-slate-600">선생님이 알려준 학급 코드와 이름을 입력해 주세요.</p>
-          </div>
+    <div className="flex min-h-dvh items-center justify-center bg-[var(--color-bg)] px-4 py-8">
+      <div className="w-full max-w-md rounded-panel border border-[var(--color-border)] bg-white p-8 shadow-sm">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">학급 입장</h1>
+          <p className="mt-2 text-base text-[var(--color-text-secondary)]">
+            선생님이 알려준 학급 코드와 이름을 입력해 주세요.
+          </p>
+        </div>
 
         {step === "pin" ? (
           <form onSubmit={handlePinSubmit} className="space-y-5">
             <div>
-              <label htmlFor="pin" className="block text-sm font-semibold text-gray-600 mb-2">
+              <label htmlFor="pin" className="mb-2 block text-base text-[var(--color-text-secondary)]">
                 PIN 번호 (4자리)
               </label>
               <input
@@ -117,28 +117,34 @@ export default function StudentJoinPage() {
                 }}
                 required
                 maxLength={4}
-                className="w-full rounded-3xl border border-slate-200 px-4 py-4 text-center text-3xl font-bold tracking-[0.5em] text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-card border border-[var(--color-border)] px-4 py-4 text-center text-3xl font-bold tracking-[0.5em] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-info)]"
                 placeholder="0000"
               />
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</div>
+              <div className="rounded-card bg-[var(--color-danger-soft)] px-4 py-3 text-base text-[var(--color-danger)]">
+                {error}
+              </div>
             )}
 
             <button
               type="submit"
               disabled={loading || pin.length !== 4}
-              className="w-full rounded-3xl bg-blue-500 py-4 text-base font-bold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-card bg-[var(--color-info)] py-4 text-lg text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "확인 중..." : "다음 →"}
             </button>
           </form>
         ) : (
           <form onSubmit={handleNameSubmit} className="space-y-4">
-            {className && <p className="rounded-3xl bg-blue-50 px-4 py-3 text-sm text-blue-700">{className}</p>}
+            {className && (
+              <p className="rounded-card bg-[var(--color-info-soft)] px-4 py-3 text-base text-[var(--color-info)]">
+                {className}
+              </p>
+            )}
             <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-gray-600 mb-2">
+              <label htmlFor="name" className="mb-2 block text-base text-[var(--color-text-secondary)]">
                 이름
               </label>
               <input
@@ -147,13 +153,15 @@ export default function StudentJoinPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full rounded-3xl border border-slate-200 px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-card border border-[var(--color-border)] px-4 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-info)]"
                 placeholder="이름을 입력하세요"
               />
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</div>
+              <div className="rounded-card bg-[var(--color-danger-soft)] px-4 py-3 text-base text-[var(--color-danger)]">
+                {error}
+              </div>
             )}
 
             <div className="flex gap-3">
@@ -164,14 +172,14 @@ export default function StudentJoinPage() {
                   setName("");
                   setError("");
                 }}
-                className="flex-1 rounded-3xl bg-slate-100 py-4 font-semibold text-slate-700 transition hover:bg-slate-200"
+                className="flex-1 rounded-card border border-[var(--color-border)] bg-white py-4 text-lg text-[var(--color-text-secondary)] transition-colors hover:bg-slate-50"
               >
                 ← 이전
               </button>
               <button
                 type="submit"
                 disabled={loading || !name.trim()}
-                className="flex-1 rounded-3xl bg-blue-500 py-4 font-bold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-card bg-[var(--color-info)] py-4 text-lg text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "입장 중..." : "입장하기 🚀"}
               </button>
@@ -180,11 +188,10 @@ export default function StudentJoinPage() {
         )}
 
         <div className="mt-6 text-center">
-          <a href="/" className="text-sm text-blue-400 hover:text-blue-600 font-medium">
+          <a href="/" className="text-base text-[var(--color-text-secondary)] hover:text-[var(--color-info)]">
             ← 홈으로 돌아가기
           </a>
         </div>
-      </div>
       </div>
     </div>
   );

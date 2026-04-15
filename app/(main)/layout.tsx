@@ -41,10 +41,10 @@ export default function MainLayout({
 
   if (!isAuthenticated && !pathname?.includes("/teacher")) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-blue-50">
+      <div className="flex min-h-dvh items-center justify-center bg-[var(--color-bg)]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-blue-600 text-base">입장 확인 중...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--color-info)] border-t-transparent" />
+          <p className="text-base text-[var(--color-text-secondary)]">입장 확인 중...</p>
         </div>
       </div>
     );
@@ -55,29 +55,29 @@ export default function MainLayout({
   }
 
   return (
-    <div className="min-h-dvh bg-[#f3f8ff]">
-      <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur">
+    <div className="min-h-dvh bg-[var(--color-bg)]">
+      <header className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-white/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
-              <Image src="/logo.png" alt="SAFE" width={38} height={38} className="object-contain" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50">
+              <Image src="/logo.png" alt="SAFE" width={32} height={32} className="object-contain" />
             </div>
             <div>
-              <p className="text-sm tracking-[0.2em] text-blue-600">SAFE Explorer</p>
-              <p className="text-base text-slate-800">안전 탐사 지도</p>
+              <p className="text-xs tracking-[0.15em] text-[var(--color-info)]">SAFE Explorer</p>
+              <p className="text-base text-[var(--color-text-primary)]">안전 탐사 지도</p>
             </div>
           </div>
 
           <button
             onClick={handleLogout}
-            className="rounded-full bg-slate-100 px-5 py-2.5 text-base text-slate-600 transition hover:bg-slate-200"
+            className="rounded-card border border-[var(--color-border)] bg-white px-4 py-2 text-base text-[var(--color-text-secondary)] transition-colors hover:bg-slate-50"
           >
             나가기
           </button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 pb-[7.5rem] pt-4">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 pb-28 pt-5">{children}</main>
       {classCode && <ClassBottomNav classCode={classCode} />}
     </div>
   );
