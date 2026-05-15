@@ -120,9 +120,7 @@ export default function ExplorerPinWizard({
         question.trim() ? `\n\n🔍 탐구적 질문: ${question.trim()}` : "",
       ].join("");
 
-      const finalAddress = locationName.trim()
-        ? `${locationName.trim()} (${location.lat.toFixed(5)}, ${location.lng.toFixed(5)})`
-        : address || null;
+      const finalAddress = locationName.trim() ? locationName.trim() : address || null;
 
       const res = await fetch("/api/pins", {
         method: "POST",
@@ -170,16 +168,13 @@ export default function ExplorerPinWizard({
               <div>
                 <p className="text-sm text-[var(--color-info)]">탐사 기록</p>
                 <h2 className="mt-1 text-xl font-bold text-[var(--color-text-primary)]">{STEP_TITLES[step]}</h2>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="whitespace-nowrap text-sm text-[var(--color-text-secondary)]">
-                    {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
-                  </span>
+                <div className="mt-2">
                   <input
                     type="text"
                     value={locationName}
                     onChange={(event) => setLocationName(event.target.value)}
                     placeholder="위치 이름 (예: 학교 앞)"
-                    className="min-w-0 flex-1 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-base text-[var(--color-text-primary)] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-info)]"
+                    className="w-full rounded-md border border-[var(--color-border)] px-3 py-1.5 text-base text-[var(--color-text-primary)] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-info)]"
                   />
                 </div>
               </div>

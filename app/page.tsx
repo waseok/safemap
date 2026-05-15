@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="relative flex min-h-dvh items-center justify-center bg-[var(--color-bg)] px-5 py-10">
+    <div className="relative flex min-h-dvh items-center justify-center bg-[var(--color-bg)] px-5 py-10 md:bg-white md:bg-[url('/main-bg.png')] md:bg-contain md:bg-top md:bg-no-repeat">
       <div className="relative mx-auto w-full max-w-md rounded-panel border border-[var(--color-border)] bg-white px-8 py-12 text-center shadow-sm">
         <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-full bg-slate-50 md:h-52 md:w-52">
           <Image

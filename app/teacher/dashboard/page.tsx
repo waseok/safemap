@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Class, SafetyPin } from "@/types";
+import { getExplorerCategoryByDb } from "@/lib/explorer";
 
 interface PinWithStudent extends SafetyPin {
   students: { name: string } | null;
@@ -360,45 +361,51 @@ export default function TeacherDashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {classPins.map((pin) => (
-                  <div
-                    key={pin.id}
-                    className={`p-4 border rounded-md cursor-pointer transition-colors ${
-                      selectedPin?.id === pin.id
-                        ? "border-green-500 bg-green-50"
-                        : "border-gray-200 hover:bg-gray-50"
-                    }`}
-                    onClick={() => openFeedback(pin)}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
-                            {pin.category}
-                          </span>
-                          <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
-                            {pin.location_type}
-                          </span>
+                {classPins.map((pin) => {
+                  const areaVisual = getExplorerCategoryByDb(pin.category);
+                  const isSelected = selectedPin?.id === pin.id;
+                  return (
+                    <div
+                      key={pin.id}
+                      className={`p-4 border-2 rounded-md cursor-pointer transition-colors ${
+                        isSelected ? "ring-2 ring-offset-1" : "hover:brightness-[0.98]"
+                      } ${areaVisual.borderClassName} ${areaVisual.surfaceClassName}`}
+                      style={isSelected ? { boxShadow: `0 0 0 2px ${areaVisual.accentColor}` } : undefined}
+                      onClick={() => openFeedback(pin)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span
+                              className={`text-xs px-2 py-0.5 rounded-full font-medium border ${areaVisual.borderClassName} ${areaVisual.surfaceClassName} ${areaVisual.textClassName}`}
+                            >
+                              {areaVisual.badgeIcon} {pin.category}
+                            </span>
+                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                              {pin.location_type}
+                            </span>
+                          </div>
+                          <h3 className="font-semibold">{pin.title}</h3>
+                          {pin.description && (
+                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{pin.description}</p>
+                          )}
+                          <p className="text-xs text-gray-400 mt-1">
+                            작성자: {pin.students?.name || "알 수 없음"} |{" "}
+                            {new Date(pin.created_at).toLocaleDateString("ko-KR")}
+                          </p>
                         </div>
-                        <h3 className="font-semibold">{pin.title}</h3>
-                        {pin.description && (
-                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">{pin.description}</p>
+                        {pin.image_url && (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={pin.image_url}
+                            alt={pin.title}
+                            className="w-16 h-16 object-cover rounded ml-3 flex-shrink-0"
+                          />
                         )}
-                        <p className="text-xs text-gray-400 mt-1">
-                          작성자: {pin.students?.name || "알 수 없음"} | {new Date(pin.created_at).toLocaleDateString("ko-KR")}
-                        </p>
                       </div>
-                      {pin.image_url && (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
-                          src={pin.image_url}
-                          alt={pin.title}
-                          className="w-16 h-16 object-cover rounded ml-3 flex-shrink-0"
-                        />
-                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

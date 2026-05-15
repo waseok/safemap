@@ -92,7 +92,6 @@ export default function ExplorerMapSection({
             markers={visibleMarkers}
             height="100%"
             showMyLocationButton
-            showSearchButton
             onCenterChange={onCenterChange}
             selectable={createMode}
             onMapClick={createMode ? onMapSelect : undefined}

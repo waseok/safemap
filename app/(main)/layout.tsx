@@ -55,8 +55,8 @@ export default function MainLayout({
   }
 
   return (
-    <div className="min-h-dvh bg-[var(--color-bg)]">
-      <header className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-white/90 backdrop-blur-sm">
+    <div className="min-h-dvh bg-[var(--color-bg)] md:bg-white md:bg-[url('/main-bg.png')] md:bg-contain md:bg-top md:bg-no-repeat">
+      <header className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-white/90 backdrop-blur-sm md:border-transparent md:bg-white/95">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50">
@@ -77,7 +77,7 @@ export default function MainLayout({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 pb-28 pt-5">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 pb-28 pt-5 md:max-w-3xl">{children}</main>
       {classCode && <ClassBottomNav classCode={classCode} />}
     </div>
   );

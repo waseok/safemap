@@ -82,9 +82,6 @@ export default function ClassCreatePage() {
       <section className="rounded-panel border border-[var(--color-border)] bg-white p-5 shadow-sm">
         <p className="text-sm text-[var(--color-info)]">안전 탐사 기록</p>
         <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">지금 서 있는 자리에서 바로 기록하기</h1>
-        <p className="mt-2 text-base leading-7 text-[var(--color-text-secondary)]">
-          GPS로 현재 위치를 가져와 자동으로 핀을 준비했어요. 사진과 해결 아이디어만 채우면 끝이에요.
-        </p>
       </section>
 
       <section className="rounded-panel border border-[var(--color-border)] bg-white p-5 shadow-sm">
@@ -110,7 +107,6 @@ export default function ClassCreatePage() {
             height="360px"
             markers={[]}
             showMyLocationButton
-            showSearchButton
             onCenterChange={(lat, lng) => setCurrentLocation({ lat, lng })}
           />
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
@@ -130,12 +126,11 @@ export default function ClassCreatePage() {
           </div>
         </div>
 
-        <div className="mt-4 rounded-card bg-slate-50 p-4 text-base text-[var(--color-text-secondary)]">
-          {locating
-            ? "📡 현재 위치를 찾는 중이에요..."
-            : locationError ||
-              `📍 이 위치(${currentLocation.lat.toFixed(5)}, ${currentLocation.lng.toFixed(5)})에 탐사 기록이 남습니다.`}
-        </div>
+        {(locating || locationError) && (
+          <div className="mt-4 rounded-card bg-slate-50 p-4 text-base text-[var(--color-text-secondary)]">
+            {locating ? "📡 현재 위치를 찾는 중이에요..." : locationError}
+          </div>
+        )}
 
         <button
           type="button"
