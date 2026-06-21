@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getReverseGeocode } from "@/lib/naver-map";
 import { getClassId, getStudentId } from "@/lib/session";
+import { uploadImageFile } from "@/lib/upload-image";
 import {
   DANGER_LEVELS,
   SAFETY_AREA_ORDER,
@@ -107,12 +108,7 @@ export default function ExplorerPinWizard({
 
       let imageUrl = "";
       if (imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-        if (!uploadRes.ok) throw new Error("사진 업로드에 실패했어요.");
-        const uploadData = await uploadRes.json();
-        imageUrl = uploadData.url;
+        imageUrl = await uploadImageFile(imageFile);
       }
 
       const fullDescription = [

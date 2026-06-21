@@ -7,6 +7,7 @@ import { getReverseGeocode } from "@/lib/naver-map";
 import type { LocationType, SafetyCategory } from "@/types";
 import { SAFETY_CATEGORIES } from "@/types";
 import { getStudentId, getClassId } from "@/lib/session";
+import { uploadImageFile } from "@/lib/upload-image";
 
 interface PinFormProps {
   onSuccess?: () => void;
@@ -74,23 +75,10 @@ export default function PinForm({ onSuccess }: PinFormProps) {
         throw new Error("마을 장소는 지도에서 위치를 선택해주세요.");
       }
 
-      // 이미지 업로드
+      // 이미지 업로드 (자동 용량 조절)
       let imageUrl = "";
       if (imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error("이미지 업로드에 실패했습니다.");
-        }
-
-        const uploadData = await uploadRes.json();
-        imageUrl = uploadData.url;
+        imageUrl = await uploadImageFile(imageFile);
       }
 
       // 핀 생성

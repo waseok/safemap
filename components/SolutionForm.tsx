@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DrawingCanvas from "./DrawingCanvas";
 import { getStudentId } from "@/lib/session";
+import { uploadImageFile } from "@/lib/upload-image";
 import type { SolutionType } from "@/types";
 
 interface SolutionFormProps {
@@ -74,23 +75,10 @@ export default function SolutionForm({ safetyPinId, onSuccess }: SolutionFormPro
           throw new Error("사진을 선택해주세요.");
         }
 
-        // 이미지 업로드
-        const formData = new FormData();
-        formData.append("file", imageFile);
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error("이미지 업로드에 실패했습니다.");
-        }
-
-        const uploadData = await uploadRes.json();
+        const imageUrl = await uploadImageFile(imageFile);
         content = structuredPrefix
-          ? `${structuredPrefix}\n\n[이미지] ${uploadData.url}`
-          : uploadData.url;
+          ? `${structuredPrefix}\n\n[이미지] ${imageUrl}`
+          : imageUrl;
       } else if (type === "drawing") {
         if (!drawingDataUrl) {
           throw new Error("그림을 그려주세요.");
@@ -101,22 +89,10 @@ export default function SolutionForm({ safetyPinId, onSuccess }: SolutionFormPro
         const blob = await response.blob();
         const file = new File([blob], "drawing.png", { type: "image/png" });
 
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error("그림 업로드에 실패했습니다.");
-        }
-
-        const uploadData = await uploadRes.json();
+        const drawingUrl = await uploadImageFile(file);
         content = structuredPrefix
-          ? `${structuredPrefix}\n\n[그림] ${uploadData.url}`
-          : uploadData.url;
+          ? `${structuredPrefix}\n\n[그림] ${drawingUrl}`
+          : drawingUrl;
       }
 
       // 해결방법 저장

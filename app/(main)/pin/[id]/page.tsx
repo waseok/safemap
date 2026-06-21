@@ -8,6 +8,7 @@ import SafetyQuiz from "@/components/SafetyQuiz";
 import { getClassCode, getStudentSessionId } from "@/lib/session";
 import type { SafetyPin, SafetyCategory } from "@/types";
 import { getClassRoute, getDangerMeta } from "@/lib/explorer";
+import { uploadImageFile } from "@/lib/upload-image";
 
 interface FeedbackData {
   id: string;
@@ -87,15 +88,13 @@ export default function PinDetailPage() {
     reader.onload = (ev) => setImagePreview(ev.target?.result as string);
     reader.readAsDataURL(file);
 
-    // 업로드
-    const formData = new FormData();
-    formData.append("file", file);
-    const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-    if (uploadRes.ok) {
-      const uploadData = await uploadRes.json();
-      setEditImageUrl(uploadData.url);
-    } else {
-      alert("이미지 업로드에 실패했습니다.");
+    // 업로드 (자동 용량 조절)
+    try {
+      const url = await uploadImageFile(file);
+      setEditImageUrl(url);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "이미지 업로드에 실패했습니다.";
+      alert(msg);
     }
   };
 
