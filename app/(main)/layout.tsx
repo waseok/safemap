@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import ClassBottomNav from "@/components/explorer/ClassBottomNav";
-import { clearStudentSession, getClassCode, getStudentSessionId } from "@/lib/session";
+import { clearStudentSession, getClassCode, getStudentSessionId, isReviewSession } from "@/lib/session";
 import { getClassRoute } from "@/lib/explorer";
 
 export default function MainLayout({
@@ -16,6 +16,7 @@ export default function MainLayout({
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [classCode, setClassCode] = useState<string | null>(null);
+  const [reviewMode, setReviewMode] = useState(false);
 
   useEffect(() => {
     const sessionId = getStudentSessionId();
@@ -26,6 +27,7 @@ export default function MainLayout({
     } else {
       setIsAuthenticated(true);
       setClassCode(storedClassCode);
+      setReviewMode(isReviewSession());
 
       if (storedClassCode && (pathname === "/map" || pathname === "/create" || pathname === "/list")) {
         const nextTab = pathname === "/create" ? "create" : pathname === "/list" ? "gallery" : "map";
@@ -81,7 +83,20 @@ export default function MainLayout({
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-6xl px-4 pb-28 pt-5 md:max-w-3xl">{children}</main>
+      <main className="relative z-10 mx-auto max-w-6xl px-4 pb-28 pt-5 md:max-w-3xl">
+        {reviewMode && (
+          <div
+            className="mb-4 rounded-card border border-[var(--color-caution)] bg-[var(--color-caution-soft)] px-4 py-3 text-base text-[var(--color-text-primary)]"
+            role="status"
+          >
+            <span className="font-bold">🔍 심사·체험 모드</span>
+            <span className="mt-1 block text-sm text-[var(--color-text-secondary)]">
+              PIN 없이 체험 학급에 입장했습니다. 지도·탐사 기록·갤러리를 자유롭게 둘러보세요.
+            </span>
+          </div>
+        )}
+        {children}
+      </main>
       {classCode && <ClassBottomNav classCode={classCode} />}
     </div>
   );

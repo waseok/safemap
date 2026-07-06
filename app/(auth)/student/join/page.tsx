@@ -187,9 +187,15 @@ export default function StudentJoinPage() {
           </form>
         )}
 
-        <div className="mt-6 text-center">
-          <a href="/" className="text-base text-[var(--color-text-secondary)] hover:text-[var(--color-info)]">
+        <div className="mt-6 space-y-3 text-center">
+          <a href="/" className="block text-base text-[var(--color-text-secondary)] hover:text-[var(--color-info)]">
             ← 홈으로 돌아가기
+          </a>
+          <a
+            href="/review"
+            className="block text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-info)]"
+          >
+            PIN 없이 심사용 테스트 입장 →
           </a>
         </div>
       </div>

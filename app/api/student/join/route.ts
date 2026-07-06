@@ -1,46 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { SAFE_CLASS_CODE } from "@/lib/explorer";
+import { generateSessionId, getOrCreateSafeClass } from "@/lib/safe-class";
 
 export const dynamic = "force-dynamic";
-
-function generateSessionId(): string {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
-async function getOrCreateSafeClass(supabase: ReturnType<typeof getSupabaseAdmin>) {
-  const { data: existing, error: selectError } = await supabase
-    .from("classes")
-    .select("id, name, pin")
-    .eq("pin", SAFE_CLASS_CODE)
-    .maybeSingle();
-
-  if (selectError) {
-    throw new Error(`학급 확인 실패: ${selectError.message}`);
-  }
-
-  if (existing) {
-    return existing;
-  }
-
-  const { data: created, error: createError } = await supabase
-    .from("classes")
-    .insert({
-      pin: SAFE_CLASS_CODE,
-      name: "SAFE 탐험반",
-      teacher_id: null,
-    })
-    .select("id, name, pin")
-    .single();
-
-  if (createError) {
-    throw new Error(`SAFE 학급 생성 실패: ${createError.message}`);
-  }
-
-  return created;
-}
 
 export async function POST(request: NextRequest) {
   try {

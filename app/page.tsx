@@ -45,6 +45,17 @@ export default function Home() {
             <span className="text-2xl">👩‍🏫</span>
             교사 로그인
           </Link>
+
+          <Link
+            href="/review"
+            className="flex w-full items-center justify-center gap-3 rounded-card border border-dashed border-[var(--color-caution)] bg-[var(--color-caution-soft)] px-6 py-4 text-lg text-[var(--color-text-primary)] transition-colors hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
+          >
+            <span className="text-2xl">🔍</span>
+            심사용 테스트 입장
+          </Link>
+          <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
+            PIN·로그인 없이 체험 학급에서 지도·기록·갤러리를 둘러볼 수 있어요.
+          </p>
         </div>
       </div>
     </div>
